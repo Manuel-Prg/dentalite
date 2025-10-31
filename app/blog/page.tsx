@@ -3,6 +3,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Clock, Search, User } from "lucide-react"
 import Link from "next/link"
+import Image from "next/image"
 
 const blogPosts = [
   {
@@ -13,7 +14,7 @@ const blogPosts = [
     author: "Dr. Juan Pérez",
     date: "2025-01-15",
     readTime: "5 min",
-    image: "bright white teeth smile close up",
+    image: "/images/blog/5-tips-whiter-teeth.webp", 
   },
   {
     id: 2,
@@ -24,7 +25,7 @@ const blogPosts = [
     author: "Dra. María López",
     date: "2025-01-10",
     readTime: "4 min",
-    image: "dentist examining patient teeth",
+    image: "/images/blog/revision-dental.webp", 
   },
   {
     id: 3,
@@ -35,7 +36,7 @@ const blogPosts = [
     author: "Dra. María López",
     date: "2025-01-05",
     readTime: "6 min",
-    image: "invisible aligners orthodontic treatment",
+    image: "/images/blog/ortodoncia-invisible.jpg", 
   },
   {
     id: 4,
@@ -46,7 +47,7 @@ const blogPosts = [
     author: "Dr. Carlos Ruiz",
     date: "2024-12-28",
     readTime: "7 min",
-    image: "child brushing teeth with parent",
+    image: "/images/blog/dientes-ninos.webp", 
   },
   {
     id: 5,
@@ -56,7 +57,7 @@ const blogPosts = [
     author: "Dr. Juan Pérez",
     date: "2024-12-20",
     readTime: "8 min",
-    image: "dental implant procedure illustration",
+    image: "/images/blog/implantes-dentales.webp", 
   },
   {
     id: 6,
@@ -66,7 +67,7 @@ const blogPosts = [
     author: "Dr. Carlos Ruiz",
     date: "2024-12-15",
     readTime: "5 min",
-    image: "healthy foods for teeth calcium rich",
+    image: "/images/blog/alimentos-saludables.webp", 
   },
 ]
 
@@ -76,7 +77,7 @@ export default function BlogPage() {
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <section className="bg-gradient-to-br from-sky-50 to-blue-50 py-16 lg:py-24">
+      <section className="bg-linear-to-br from-sky-50 to-blue-50 py-16 lg:py-24">
         <div className="container mx-auto px-4">
           <div className="max-w-3xl mx-auto text-center">
             <h1 className="text-4xl lg:text-5xl font-bold mb-6 text-slate-900 text-balance">
@@ -116,11 +117,14 @@ export default function BlogPage() {
           <h2 className="text-2xl font-bold mb-8 text-slate-900">Artículo destacado</h2>
           <Card className="overflow-hidden hover:shadow-xl transition-shadow">
             <div className="grid lg:grid-cols-2 gap-0">
-              <div className="h-64 lg:h-auto">
-                <img
-                  src={`/.jpg?height=500&width=600&query=${blogPosts[0].image}`}
+              <div className="relative h-64 lg:h-auto">
+                <Image
+                  src={blogPosts[0].image}
                   alt={blogPosts[0].title}
-                  className="w-full h-full object-cover"
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 1024px) 100vw, 50vw"
+                  priority 
                 />
               </div>
               <CardContent className="p-8 flex flex-col justify-center">
@@ -168,11 +172,13 @@ export default function BlogPage() {
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {blogPosts.slice(1).map((post) => (
               <Card key={post.id} className="overflow-hidden hover:shadow-lg transition-shadow">
-                <div className="h-48 overflow-hidden">
-                  <img
-                    src={`/.jpg?height=300&width=400&query=${post.image}`}
+                <div className="relative h-48 overflow-hidden">
+                  <Image
+                    src={post.image}
                     alt={post.title}
-                    className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                    fill
+                    className="object-cover hover:scale-105 transition-transform duration-300"
+                    sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
                   />
                 </div>
                 <CardContent className="p-6">

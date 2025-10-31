@@ -2,6 +2,7 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Calendar, Clock, Shield, Star, Users, Award } from "lucide-react"
+import Image from "next/image" 
 
 export default function HomePage() {
   return (
@@ -129,10 +130,10 @@ export default function HomePage() {
 
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
             {[
-              { name: "Limpieza dental", image: "dental cleaning procedure" },
-              { name: "Ortodoncia", image: "orthodontic braces treatment" },
-              { name: "Blanqueamiento", image: "teeth whitening procedure" },
-              { name: "Implantes", image: "dental implant procedure" },
+              { name: "Limpieza dental", image: "/images/limpieza_dental.png" }, 
+              { name: "Ortodoncia", image: "/images/ortodencia.jpg" },
+              { name: "Blanqueamiento", image: "/images/blanqueamiento.jpg" },
+              { name: "Implantes", image: "/images/implantes.jpg" },
             ].map((service, index) => (
               <Card
                 key={service.name}
@@ -140,10 +141,12 @@ export default function HomePage() {
               >
                 <div className="h-48 overflow-hidden relative">
                   <div className="absolute inset-0 bg-linear-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity z-10" />
-                  <img
-                    src={`/.jpg?height=200&width=300&query=${service.image}`}
+                  <Image
+                    src={service.image}
                     alt={service.name}
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                    layout="fill" 
+                    objectFit="cover" 
+                    className="group-hover:scale-110 transition-transform duration-500"
                   />
                 </div>
                 <CardContent className="p-4">

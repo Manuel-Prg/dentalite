@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Check } from "lucide-react"
 import Link from "next/link"
+import Image from "next/image" 
 
 const services = [
   {
@@ -10,7 +11,7 @@ const services = [
     price: "Desde $50",
     duration: "45 min",
     benefits: ["Prevención de caries", "Eliminación de manchas", "Encías más saludables", "Aliento fresco"],
-    image: "dental cleaning procedure with tools",
+    image: "/images/services/limpieza.webp", 
   },
   {
     name: "Ortodoncia",
@@ -23,7 +24,7 @@ const services = [
       "Opciones invisibles disponibles",
       "Plan de pago flexible",
     ],
-    image: "orthodontic braces on teeth",
+    image: "/images/services/ortodoncia.webp", // <-- 2. RUTA ACTUALIZADA
   },
   {
     name: "Blanqueamiento dental",
@@ -31,7 +32,7 @@ const services = [
     price: "Desde $200",
     duration: "1 hora",
     benefits: ["Resultados inmediatos", "Hasta 8 tonos más blanco", "Procedimiento seguro", "Larga duración"],
-    image: "teeth whitening procedure",
+    image: "/images/services/blanqueamiento.webp", // <-- 2. RUTA ACTUALIZADA
   },
   {
     name: "Implantes dentales",
@@ -39,7 +40,7 @@ const services = [
     price: "Desde $800",
     duration: "3-6 meses",
     benefits: ["Solución permanente", "Aspecto natural", "Restaura la función completa", "Previene pérdida ósea"],
-    image: "dental implant procedure",
+    image: "/images/services/implantes.webp", // <-- 2. RUTA ACTUALIZADA
   },
   {
     name: "Endodoncia",
@@ -47,7 +48,7 @@ const services = [
     price: "Desde $300",
     duration: "1-2 horas",
     benefits: ["Salva el diente natural", "Elimina el dolor", "Procedimiento indoloro", "Alta tasa de éxito"],
-    image: "root canal treatment procedure",
+    image: "/images/services/endodoncia.webp", // <-- 2. RUTA ACTUALIZADA
   },
   {
     name: "Odontopediatría",
@@ -55,7 +56,7 @@ const services = [
     price: "Desde $40",
     duration: "30-45 min",
     benefits: ["Ambiente amigable para niños", "Prevención temprana", "Educación dental", "Experiencia positiva"],
-    image: "pediatric dentist with child patient",
+    image: "/images/services/odontopediatria.webp", // <-- 2. RUTA ACTUALIZADA
   },
   {
     name: "Carillas dentales",
@@ -63,7 +64,7 @@ const services = [
     price: "Desde $400",
     duration: "2 sesiones",
     benefits: ["Sonrisa de Hollywood", "Corrige imperfecciones", "Resultados duraderos", "Mínimamente invasivo"],
-    image: "dental veneers application",
+    image: "/images/services/carillas.webp", // <-- 2. RUTA ACTUALIZADA
   },
   {
     name: "Periodoncia",
@@ -71,15 +72,25 @@ const services = [
     price: "Desde $150",
     duration: "1-2 horas",
     benefits: ["Encías saludables", "Previene pérdida dental", "Reduce inflamación", "Mejora salud general"],
-    image: "periodontal treatment procedure",
+    image: "/images/services/periodoncia.webp", // <-- 2. RUTA ACTUALIZADA
   },
+]
+
+// 4. RUTAS ACTUALIZADAS PARA LA GALERÍA
+const galleryImages = [
+  "/images/blanqueamiento.jpg",
+  "/images/ortodencia.jpg",
+  "/images/implantes.jpg",
+  "/images/carillas.jpg",
+  "/images/alineacion.jpg",
+  "/images/transformación.png",
 ]
 
 export default function ServicesPage() {
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <section className="bg-gradient-to-br from-sky-50 to-blue-50 py-16 lg:py-24">
+      <section className="bg-linear-to-br from-sky-50 to-blue-50 py-16 lg:py-24">
         <div className="container mx-auto px-4">
           <div className="max-w-3xl mx-auto text-center">
             <h1 className="text-4xl lg:text-5xl font-bold mb-6 text-slate-900 text-balance">Nuestros servicios</h1>
@@ -98,13 +109,17 @@ export default function ServicesPage() {
             {services.map((service) => (
               <Card key={service.name} className="overflow-hidden hover:shadow-lg transition-shadow">
                 <div className="grid md:grid-cols-5 gap-6">
-                  <div className="md:col-span-2 h-64 md:h-auto">
-                    <img
-                      src={`/.jpg?height=400&width=300&query=${service.image}`}
+                  {/* --- 3. CAMBIO DE IMG A IMAGE --- */}
+                  <div className="md:col-span-2 h-64 md:h-full relative">
+                    <Image
+                      src={service.image}
                       alt={service.name}
-                      className="w-full h-full object-cover"
+                      fill
+                      className="object-cover"
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 40vw, 33vw"
                     />
                   </div>
+                  {/* --- FIN DEL CAMBIO --- */}
                   <CardContent className="md:col-span-3 p-6">
                     <h3 className="text-2xl font-bold mb-2 text-slate-900">{service.name}</h3>
                     <p className="text-slate-600 mb-4 leading-relaxed">{service.description}</p>
@@ -121,7 +136,7 @@ export default function ServicesPage() {
                     <div className="space-y-2 mb-6">
                       {service.benefits.map((benefit) => (
                         <div key={benefit} className="flex items-center gap-2">
-                          <Check className="h-4 w-4 text-sky-600 flex-shrink-0" />
+                          <Check className="h-4 w-4 text-sky-600 shrink-0" />
                           <span className="text-sm text-slate-600">{benefit}</span>
                         </div>
                       ))}
@@ -149,20 +164,19 @@ export default function ServicesPage() {
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {[
-              "teeth whitening before and after comparison",
-              "orthodontic treatment before and after",
-              "dental implant before and after result",
-              "dental veneers before and after smile",
-              "teeth alignment before and after braces",
-              "smile makeover before and after transformation",
-            ].map((query, index) => (
+            {galleryImages.map((imageSrc, index) => ( // <-- 4. USAR EL NUEVO ARRAY
               <Card key={index} className="overflow-hidden">
-                <img
-                  src={`/.jpg?height=300&width=400&query=${query}`}
-                  alt={`Resultado ${index + 1}`}
-                  className="w-full h-64 object-cover"
-                />
+                {/* --- 5. CAMBIO DE IMG A IMAGE --- */}
+                <div className="relative h-64">
+                  <Image
+                    src={imageSrc}
+                    alt={`Resultado ${index + 1}`}
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
+                  />
+                </div>
+                {/* --- FIN DEL CAMBIO --- */}
               </Card>
             ))}
           </div>

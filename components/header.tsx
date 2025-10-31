@@ -1,6 +1,7 @@
 "use client"
 
 import Link from "next/link"
+import Image from "next/image" 
 import { Button } from "@/components/ui/button"
 import { Calendar, Menu, X } from "lucide-react"
 import { useState } from "react"
@@ -21,7 +22,13 @@ export function Header() {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2">
-            <div className="bg-sky-600 text-white font-bold text-xl px-3 py-1 rounded-lg">D</div>
+            <Image
+              src="/logo.png" 
+              alt="Logo de Dentalite"
+              width={98} 
+              height={98} 
+              priority 
+            />
             <span className="font-bold text-xl text-slate-900">Dentalite</span>
           </Link>
 
@@ -30,7 +37,9 @@ export function Header() {
             <Link
               href="/"
               className={`transition-colors ${
-                isActive("/") && pathname === "/" ? "text-sky-600 font-semibold" : "text-slate-600 hover:text-sky-600"
+                isActive("/") && pathname === "/"
+                  ? "text-sky-600 font-semibold"
+                  : "text-slate-600 hover:text-sky-600"
               }`}
             >
               Inicio
@@ -38,7 +47,9 @@ export function Header() {
             <Link
               href="/sobre-nosotros"
               className={`transition-colors ${
-                isActive("/sobre-nosotros") ? "text-sky-600 font-semibold" : "text-slate-600 hover:text-sky-600"
+                isActive("/sobre-nosotros")
+                  ? "text-sky-600 font-semibold"
+                  : "text-slate-600 hover:text-sky-600"
               }`}
             >
               Sobre nosotros
@@ -46,7 +57,9 @@ export function Header() {
             <Link
               href="/servicios"
               className={`transition-colors ${
-                isActive("/servicios") ? "text-sky-600 font-semibold" : "text-slate-600 hover:text-sky-600"
+                isActive("/servicios")
+                  ? "text-sky-600 font-semibold"
+                  : "text-slate-600 hover:text-sky-600"
               }`}
             >
               Servicios
@@ -54,7 +67,9 @@ export function Header() {
             <Link
               href="/blog"
               className={`transition-colors ${
-                isActive("/blog") ? "text-sky-600 font-semibold" : "text-slate-600 hover:text-sky-600"
+                isActive("/blog")
+                  ? "text-sky-600 font-semibold"
+                  : "text-slate-600 hover:text-sky-600"
               }`}
             >
               Blog
@@ -62,7 +77,9 @@ export function Header() {
             <Link
               href="/contacto"
               className={`transition-colors ${
-                isActive("/contacto") ? "text-sky-600 font-semibold" : "text-slate-600 hover:text-sky-600"
+                isActive("/contacto")
+                  ? "text-sky-600 font-semibold"
+                  : "text-slate-600 hover:text-sky-600"
               }`}
             >
               Contacto
@@ -83,8 +100,16 @@ export function Header() {
           </div>
 
           {/* Mobile Menu Button */}
-          <button className="md:hidden" onClick={() => setMobileMenuOpen(!mobileMenuOpen)} aria-label="Toggle menu">
-            {mobileMenuOpen ? <X className="h-6 w-6 text-slate-900" /> : <Menu className="h-6 w-6 text-slate-900" />}
+          <button
+            className="md:hidden"
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            aria-label="Toggle menu"
+          >
+            {mobileMenuOpen ? (
+              <X className="h-6 w-6 text-slate-900" />
+            ) : (
+              <Menu className="h-6 w-6 text-slate-900" />
+            )}
           </button>
         </div>
 
@@ -95,7 +120,9 @@ export function Header() {
               <Link
                 href="/"
                 className={`transition-colors ${
-                  isActive("/") && pathname === "/" ? "text-sky-600 font-semibold" : "text-slate-600 hover:text-sky-600"
+                  isActive("/") && pathname === "/"
+                    ? "text-sky-600 font-semibold"
+                    : "text-slate-600 hover:text-sky-600"
                 }`}
                 onClick={() => setMobileMenuOpen(false)}
               >
@@ -104,7 +131,9 @@ export function Header() {
               <Link
                 href="/sobre-nosotros"
                 className={`transition-colors ${
-                  isActive("/sobre-nosotros") ? "text-sky-600 font-semibold" : "text-slate-600 hover:text-sky-600"
+                  isActive("/sobre-nosotros")
+                    ? "text-sky-600 font-semibold"
+                    : "text-slate-600 hover:text-sky-600"
                 }`}
                 onClick={() => setMobileMenuOpen(false)}
               >
@@ -113,7 +142,9 @@ export function Header() {
               <Link
                 href="/servicios"
                 className={`transition-colors ${
-                  isActive("/servicios") ? "text-sky-600 font-semibold" : "text-slate-600 hover:text-sky-600"
+                  isActive("/servicios")
+                    ? "text-sky-600 font-semibold"
+                    : "text-slate-600 hover:text-sky-600"
                 }`}
                 onClick={() => setMobileMenuOpen(false)}
               >
@@ -122,7 +153,9 @@ export function Header() {
               <Link
                 href="/blog"
                 className={`transition-colors ${
-                  isActive("/blog") ? "text-sky-600 font-semibold" : "text-slate-600 hover:text-sky-600"
+                  isActive("/blog")
+                    ? "text-sky-600 font-semibold"
+                    : "text-slate-600 hover:text-sky-600"
                 }`}
                 onClick={() => setMobileMenuOpen(false)}
               >
@@ -131,7 +164,9 @@ export function Header() {
               <Link
                 href="/contacto"
                 className={`transition-colors ${
-                  isActive("/contacto") ? "text-sky-600 font-semibold" : "text-slate-600 hover:text-sky-600"
+                  isActive("/contacto")
+                    ? "text-sky-600 font-semibold"
+                    : "text-slate-600 hover:text-sky-600"
                 }`}
                 onClick={() => setMobileMenuOpen(false)}
               >

@@ -179,7 +179,7 @@ export default function AgendarPage() {
       <Breadcrumbs />
 
       {/* Hero Section */}
-      <section className="bg-gradient-to-br from-sky-50 to-blue-50 py-12 lg:py-16">
+      <section className="bg-linear-to-br from-sky-50 to-blue-50 py-12 lg:py-16">
         <div className="container mx-auto px-4">
           <div className="max-w-3xl mx-auto text-center">
             <h1 className="text-4xl lg:text-5xl font-bold mb-4 text-slate-900 text-balance">Agenda tu cita</h1>

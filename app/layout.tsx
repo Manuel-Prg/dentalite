@@ -12,6 +12,11 @@ export const metadata: Metadata = {
   title: "Dentalite - Tu clínica dental de confianza",
   description: "Cuidamos tu sonrisa con profesionalismo y tecnología de vanguardia. Agenda tu cita hoy.",
   generator: 'abner dev',
+  icons:{
+    icon: '/favicon.ico',
+    apple: '/apple-touch-icon.png',
+    shortcut: '/apple-touch-icon.png'
+  }
 }
 
 export default function RootLayout({

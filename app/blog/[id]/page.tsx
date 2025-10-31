@@ -2,8 +2,8 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Calendar, Clock, User, ArrowLeft, Share2 } from "lucide-react"
 import Link from "next/link"
+import Image from "next/image"
 
-// Mock data - in a real app, this would come from a database
 const blogPost = {
   id: 1,
   title: "5 consejos para mantener tus dientes blancos",
@@ -11,7 +11,7 @@ const blogPost = {
   author: "Dr. Juan Pérez",
   date: "2025-01-15",
   readTime: "5 min",
-  image: "bright white teeth smile close up",
+  image: "/images/blog/5-tips-whiter-teeth.webp", 
   content: `
     <p>Mantener una sonrisa blanca y brillante es el deseo de muchas personas. Aunque existen tratamientos profesionales de blanqueamiento, hay varios hábitos diarios que puedes adoptar para mantener tus dientes naturalmente blancos.</p>
 
@@ -40,13 +40,13 @@ const relatedPosts = [
     id: 2,
     title: "La importancia de las revisiones dentales regulares",
     category: "Prevención",
-    image: "dentist examining patient teeth",
+    image: "/images/blog/revision-dental.webp", 
   },
   {
     id: 6,
     title: "Alimentos que fortalecen tus dientes",
     category: "Nutrición",
-    image: "healthy foods for teeth calcium rich",
+    image: "/images/blog/alimentos-saludables.webp",
   },
 ]
 
@@ -107,12 +107,14 @@ export default function BlogPostPage() {
                 Compartir
               </Button>
             </div>
-
             <div className="rounded-2xl overflow-hidden mb-12">
-              <img
-                src={`/.jpg?height=600&width=1200&query=${blogPost.image}`}
+              <Image
+                src={blogPost.image} 
                 alt={blogPost.title}
-                className="w-full h-auto"
+                width={900} 
+                height={500} 
+                className="w-full h-auto object-cover" 
+                priority 
               />
             </div>
           </div>
@@ -152,13 +154,17 @@ export default function BlogPostPage() {
             <div className="grid md:grid-cols-2 gap-8">
               {relatedPosts.map((post) => (
                 <Card key={post.id} className="overflow-hidden hover:shadow-lg transition-shadow">
-                  <div className="h-48 overflow-hidden">
-                    <img
-                      src={`/.jpg?height=300&width=400&query=${post.image}`}
+                  {/* --- 3. CAMBIO DE IMAGEN RELACIONADOS --- */}
+                  <div className="relative h-48 overflow-hidden">
+                    <Image
+                      src={post.image}
                       alt={post.title}
-                      className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                      fill
+                      className="object-cover hover:scale-105 transition-transform duration-300"
+                      sizes="(max-width: 768px) 100vw, 50vw"
                     />
                   </div>
+                  {/* --- FIN DEL CAMBIO --- */}
                   <CardContent className="p-6">
                     <span className="bg-sky-100 text-sky-700 px-2 py-1 rounded-full text-xs font-medium">
                       {post.category}

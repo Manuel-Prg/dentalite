@@ -1,4 +1,5 @@
 import Link from "next/link"
+import Image from "next/image" // <-- 1. IMPORTAR IMAGE
 import { Facebook, Instagram, Mail, MapPin, Phone } from "lucide-react"
 
 export function Footer() {
@@ -9,8 +10,12 @@ export function Footer() {
           {/* About */}
           <div>
             <div className="flex items-center gap-2 mb-4">
-              <div className="bg-sky-600 text-white font-bold text-xl px-3 py-1 rounded-lg">D</div>
-              <span className="font-bold text-xl text-white">Dentalite</span>
+              <Image
+                src="/logo.png" 
+                alt="Logo de Dentalite"
+                width={248} 
+                height={248} 
+              />
             </div>
             <p className="text-sm leading-relaxed mb-4">
               Tu clínica dental de confianza. Cuidamos tu sonrisa con profesionalismo y tecnología de vanguardia.
@@ -89,15 +94,15 @@ export function Footer() {
             <h3 className="font-semibold text-white mb-4">Contacto</h3>
             <ul className="space-y-3 text-sm">
               <li className="flex items-start gap-2">
-                <MapPin className="h-5 w-5 text-sky-400 flex-shrink-0 mt-0.5" />
+                <MapPin className="h-5 w-5 text-sky-400 shrink-0 mt-0.5" />
                 <span>Av. Principal 123, Ciudad, País</span>
               </li>
               <li className="flex items-center gap-2">
-                <Phone className="h-5 w-5 text-sky-400 flex-shrink-0" />
+                <Phone className="h-5 w-5 text-sky-400 shrink-0" />
                 <span>+1 234 567 8900</span>
               </li>
               <li className="flex items-center gap-2">
-                <Mail className="h-5 w-5 text-sky-400 flex-shrink-0" />
+                <Mail className="h-5 w-5 text-sky-400 shrink-0" />
                 <span>info@dentalite.com</span>
               </li>
             </ul>

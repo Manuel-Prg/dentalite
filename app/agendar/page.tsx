@@ -16,6 +16,8 @@ import { HelpTooltip } from "@/components/help-tooltip"
 import { appointmentsService, doctorsService, patientsService } from "@/lib/supabase"
 import { useAuth } from "@/contexts/AuthContext"
 import { useRouter } from "next/navigation"
+import { sendWhatsAppConfirmation } from "@/lib/whatsapp"
+import { sendAppointmentConfirmationEmail } from "@/lib/email"
 
 const services = [
   "Limpieza dental",
@@ -132,7 +134,7 @@ export default function AgendarPage() {
       }
 
       // Crear la cita
-      await appointmentsService.create({
+      const newAppointment = await appointmentsService.create({
         patient_id: currentPatientId,
         doctor_id: formData.doctorId || null,
         service: formData.service,
@@ -142,7 +144,28 @@ export default function AgendarPage() {
         status: 'pendiente',
       })
 
+      // Obtener datos del doctor seleccionado
+      const selectedDoctor = doctors.find(d => d.id === formData.doctorId)
+
+      const appointmentInfo = {
+        patientName: `${formData.firstName} ${formData.lastName}`,
+        service: formData.service,
+        date: date!.toISOString().split('T')[0],
+        time: selectedTime,
+        doctorName: selectedDoctor?.name
+      }
+
+      sendWhatsAppConfirmation(formData.phone, appointmentInfo)
+
+      try {
+        await sendAppointmentConfirmationEmail(formData.email, appointmentInfo)
+        console.log('Email sent successfully')
+      } catch (emailError) {
+        console.error('Error sending email:', emailError)
+      }
+
       setStep(4)
+
     } catch (error: any) {
       console.error('Error creating appointment:', error)
       alert('Error al crear la cita: ' + error.message)
@@ -156,7 +179,7 @@ export default function AgendarPage() {
       <Breadcrumbs />
 
       {/* Hero Section */}
-      <section className="bg-linear-to-br from-sky-50 to-blue-50 py-12 lg:py-16">
+      <section className="bg-gradient-to-br from-sky-50 to-blue-50 py-12 lg:py-16">
         <div className="container mx-auto px-4">
           <div className="max-w-3xl mx-auto text-center">
             <h1 className="text-4xl lg:text-5xl font-bold mb-4 text-slate-900 text-balance">Agenda tu cita</h1>
@@ -545,9 +568,15 @@ export default function AgendarPage() {
                     <Check className="h-10 w-10 text-green-600" />
                   </div>
                   <h2 className="text-3xl font-bold mb-4 text-slate-900">¡Cita confirmada!</h2>
-                  <p className="text-lg text-slate-600 mb-8 max-w-md mx-auto text-pretty">
-                    Tu cita ha sido agendada exitosamente. Recibirás una confirmación por WhatsApp y correo electrónico.
+                  <p className="text-lg text-slate-600 mb-4 max-w-md mx-auto text-pretty">
+                    Tu cita ha sido agendada exitosamente.
                   </p>
+                  <div className="bg-sky-50 border border-sky-200 p-4 rounded-lg mb-8 max-w-md mx-auto">
+                    <p className="text-sm text-sky-900 leading-relaxed">
+                      📱 Se ha abierto WhatsApp con tu confirmación. Si no se abrió automáticamente, 
+                      también recibirás la confirmación por correo electrónico.
+                    </p>
+                  </div>
 
                   <div className="bg-slate-50 p-6 rounded-lg mb-8 max-w-md mx-auto">
                     <div className="space-y-3 text-left">

@@ -11,7 +11,7 @@ const inter = Inter({ subsets: ["latin"] })
 export const metadata: Metadata = {
   title: "Dentalite - Tu clínica dental de confianza",
   description: "Cuidamos tu sonrisa con profesionalismo y tecnología de vanguardia. Agenda tu cita hoy.",
-  generator: 'v0.app'
+  generator: 'abner dev',
 }
 
 export default function RootLayout({

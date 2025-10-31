@@ -24,7 +24,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const router = useRouter()
 
   useEffect(() => {
-    // Verificar sesión actual
     supabase.auth.getSession().then(({ data: { session } }) => {
       setUser(session?.user ?? null)
       checkIfAdmin(session?.user ?? null)
@@ -49,16 +48,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       return
     }
 
-    // Verificar si el usuario es admin consultando su metadata o una tabla de roles
-    const { data, error } = await supabase
-      .from('user_roles')
-      .select('role')
-      .eq('user_id', user.id)
-      .single()
+    try {
+      const { data, error } = await supabase
+        .from('user_roles')
+        .select('role')
+        .eq('user_id', user.id)
+        .maybeSingle() 
 
-    if (!error && data?.role === 'admin') {
-      setIsAdmin(true)
-    } else {
+      if (!error && data?.role === 'admin') {
+        setIsAdmin(true)
+      } else {
+        setIsAdmin(false)
+      }
+    } catch (err) {
+      console.error('Error checking admin status:', err)
       setIsAdmin(false)
     }
   }
@@ -75,18 +78,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
+      options: {
+        emailRedirectTo: `${window.location.origin}/pacientes`,
+        data: {
+          first_name: userData.firstName,
+          last_name: userData.lastName,
+          phone: userData.phone,
+        }
+      }
     })
+    
     if (error) throw error
 
-    // Verificar que el usuario fue creado
     if (!data.user) {
       throw new Error('No se pudo crear el usuario')
     }
-
-    // Esperar un momento para asegurar que el usuario existe en la BD
-    await new Promise(resolve => setTimeout(resolve, 1000))
-
-    // Crear registro de paciente asociado
     try {
       const { error: patientError } = await supabase
         .from('patients')
@@ -102,11 +108,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       if (patientError) {
         console.error('Error creating patient:', patientError)
-        throw new Error('Usuario creado pero no se pudo crear el perfil de paciente. Por favor contacta al administrador.')
+        console.warn('El perfil de paciente se creará cuando confirmes tu email')
       }
     } catch (err) {
       console.error('Error in patient creation:', err)
-      throw err
+      console.warn('El perfil de paciente se creará cuando confirmes tu email')
     }
   }
 

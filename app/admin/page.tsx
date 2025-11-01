@@ -250,19 +250,63 @@ function DashboardView() {
   const today = new Date()
   today.setHours(0, 0, 0, 0)
 
+  const yesterday = new Date(today)
+  yesterday.setDate(yesterday.getDate() - 1)
+
   const todayAppointments = appointments.filter(apt => {
     const aptDate = new Date(apt.date)
     aptDate.setHours(0, 0, 0, 0)
     return aptDate.getTime() === today.getTime()
   })
 
+  const yesterdayAppointments = appointments.filter(apt => {
+    const aptDate = new Date(apt.date)
+    aptDate.setHours(0, 0, 0, 0)
+    return aptDate.getTime() === yesterday.getTime()
+  })
+
   const pendingAppointments = appointments.filter(apt => apt.status === 'pendiente')
+  
+  // Calcular citas pendientes de ayer para la comparación
+  const yesterdayPending = appointments.filter(apt => {
+    const aptDate = new Date(apt.date)
+    aptDate.setHours(0, 0, 0, 0)
+    return apt.status === 'pendiente' && aptDate.getTime() <= yesterday.getTime()
+  })
+
+  // Calcular cambios
+  const todayChange = todayAppointments.length - yesterdayAppointments.length
+  const pendingChange = pendingAppointments.length - yesterdayPending.length
 
   const stats = [
-    { label: "Citas hoy", value: todayAppointments.length.toString(), change: "+2", icon: Calendar, color: "from-blue-500 to-blue-600" },
-    { label: "Pacientes totales", value: patients.length.toString(), change: `+${patients.length}`, icon: Users, color: "from-green-500 to-green-600" },
-    { label: "Citas pendientes", value: pendingAppointments.length.toString(), change: "-3", icon: Clock, color: "from-yellow-500 to-yellow-600" },
-    { label: "Ingresos del mes", value: "$12,450", change: "+12%", icon: TrendingUp, color: "from-purple-500 to-purple-600" },
+    { 
+      label: "Citas hoy", 
+      value: todayAppointments.length.toString(), 
+      change: todayChange >= 0 ? `+${todayChange}` : todayChange.toString(), 
+      icon: Calendar, 
+      color: "from-blue-500 to-blue-600" 
+    },
+    { 
+      label: "Pacientes totales", 
+      value: patients.length.toString(), 
+      change: `+${patients.length}`, 
+      icon: Users, 
+      color: "from-green-500 to-green-600" 
+    },
+    { 
+      label: "Citas pendientes", 
+      value: pendingAppointments.length.toString(), 
+      change: pendingChange >= 0 ? `+${pendingChange}` : pendingChange.toString(), 
+      icon: Clock, 
+      color: "from-yellow-500 to-yellow-600" 
+    },
+    { 
+      label: "Ingresos del mes", 
+      value: "$12,450", 
+      change: "+12%", 
+      icon: TrendingUp, 
+      color: "from-purple-500 to-purple-600" 
+    },
   ]
 
   if (loading) {

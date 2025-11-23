@@ -18,7 +18,7 @@ import { useAuth } from "@/contexts/AuthContext"
 import { useRouter } from "next/navigation"
 import { sendWhatsAppConfirmation } from "@/lib/whatsapp"
 import { sendAppointmentConfirmationEmail } from "@/lib/email"
-
+import { AuthRequiredDialog } from "@/components/auth-required-dialog"
 const services = [
   "Limpieza dental",
   "Ortodoncia",
@@ -60,6 +60,7 @@ export default function AgendarPage() {
   const [loading, setLoading] = useState(false)
   const [doctors, setDoctors] = useState<any[]>([])
   const [patientId, setPatientId] = useState<string | null>(null)
+  const [showAuthDialog, setShowAuthDialog] = useState(false)
   const { user } = useAuth()
   const router = useRouter()
 
@@ -91,7 +92,7 @@ export default function AgendarPage() {
 
   const loadUserPatientData = async () => {
     if (!user) return
-    
+
     try {
       const patient = await patientsService.getByUserId(user.id)
       if (patient) {
@@ -168,7 +169,15 @@ export default function AgendarPage() {
 
     } catch (error: any) {
       console.error('Error creating appointment:', error)
-      alert('Error al crear la cita: ' + error.message)
+
+      // Detectar error de política RLS de Supabase
+      if (error.message?.includes('new row violates row-level security policy') ||
+        error.message?.includes('policy') ||
+        error.code === '42501') {
+        setShowAuthDialog(true)
+      } else {
+        alert('Error al crear la cita: ' + error.message)
+      }
     } finally {
       setLoading(false)
     }
@@ -204,9 +213,8 @@ export default function AgendarPage() {
                 <div key={s.num} className="flex items-center flex-1">
                   <div className="flex flex-col items-center flex-1">
                     <div
-                      className={`w-10 h-10 rounded-full flex items-center justify-center font-semibold ${
-                        step >= s.num ? "bg-sky-600 text-white" : "bg-slate-200 text-slate-500"
-                      }`}
+                      className={`w-10 h-10 rounded-full flex items-center justify-center font-semibold ${step >= s.num ? "bg-sky-600 text-white" : "bg-slate-200 text-slate-500"
+                        }`}
                     >
                       {step > s.num ? <Check className="h-5 w-5" /> : s.num}
                     </div>
@@ -540,9 +548,9 @@ export default function AgendarPage() {
                       <Button type="button" variant="outline" onClick={() => setStep(2)} className="flex-1" disabled={loading}>
                         Atrás
                       </Button>
-                      <Button 
-                        type="button" 
-                        onClick={handleSubmit} 
+                      <Button
+                        type="button"
+                        onClick={handleSubmit}
                         className="flex-1 bg-sky-600 hover:bg-sky-700"
                         disabled={loading}
                       >
@@ -573,7 +581,7 @@ export default function AgendarPage() {
                   </p>
                   <div className="bg-sky-50 border border-sky-200 p-4 rounded-lg mb-8 max-w-md mx-auto">
                     <p className="text-sm text-sky-900 leading-relaxed">
-                      📱 Se ha abierto WhatsApp con tu confirmación. Si no se abrió automáticamente, 
+                      📱 Se ha abierto WhatsApp con tu confirmación. Si no se abrió automáticamente,
                       también recibirás la confirmación por correo electrónico.
                     </p>
                   </div>
@@ -662,6 +670,10 @@ export default function AgendarPage() {
                     </p>
                   </CardContent>
                 </Card>
+                <AuthRequiredDialog
+                  open={showAuthDialog}
+                  onOpenChange={setShowAuthDialog}
+                />
               </div>
             </div>
           </div>

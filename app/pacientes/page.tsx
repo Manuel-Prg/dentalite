@@ -108,34 +108,34 @@ function LoginPage() {
                       <div className="grid grid-cols-2 gap-4">
                         <div className="space-y-2">
                           <Label htmlFor="firstName">Nombre</Label>
-                          <Input 
-                            id="firstName" 
-                            required 
+                          <Input
+                            id="firstName"
+                            required
                             placeholder="Juan"
                             value={formData.firstName}
-                            onChange={(e) => setFormData({...formData, firstName: e.target.value})}
+                            onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
                           />
                         </div>
                         <div className="space-y-2">
                           <Label htmlFor="lastName">Apellido</Label>
-                          <Input 
-                            id="lastName" 
-                            required 
+                          <Input
+                            id="lastName"
+                            required
                             placeholder="Pérez"
                             value={formData.lastName}
-                            onChange={(e) => setFormData({...formData, lastName: e.target.value})}
+                            onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
                           />
                         </div>
                       </div>
                       <div className="space-y-2">
                         <Label htmlFor="phone">Teléfono</Label>
-                        <Input 
-                          id="phone" 
-                          type="tel" 
-                          required 
+                        <Input
+                          id="phone"
+                          type="tel"
+                          required
                           placeholder="+52 993 123 4567"
                           value={formData.phone}
-                          onChange={(e) => setFormData({...formData, phone: e.target.value})}
+                          onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                         />
                       </div>
                     </>
@@ -143,42 +143,33 @@ function LoginPage() {
 
                   <div className="space-y-2">
                     <Label htmlFor="email">Correo electrónico</Label>
-                    <Input 
-                      id="email" 
-                      type="email" 
-                      required 
+                    <Input
+                      id="email"
+                      type="email"
+                      required
                       placeholder="juan@ejemplo.com"
                       value={formData.email}
-                      onChange={(e) => setFormData({...formData, email: e.target.value})}
+                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                     />
                   </div>
 
                   <div className="space-y-2">
                     <Label htmlFor="password">Contraseña</Label>
-                    <Input 
-                      id="password" 
-                      type="password" 
-                      required 
+                    <Input
+                      id="password"
+                      type="password"
+                      required
                       placeholder="••••••••"
                       minLength={6}
                       value={formData.password}
-                      onChange={(e) => setFormData({...formData, password: e.target.value})}
+                      onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                     />
                     {!isLogin && (
                       <p className="text-xs text-slate-500">Mínimo 6 caracteres</p>
                     )}
                   </div>
-
-                  {isLogin && (
-                    <div className="text-right">
-                      <button type="button" className="text-sm text-sky-600 hover:underline">
-                        ¿Olvidaste tu contraseña?
-                      </button>
-                    </div>
-                  )}
-
-                  <Button 
-                    type="submit" 
+                  <Button
+                    type="submit"
                     className="w-full bg-sky-600 hover:bg-sky-700"
                     disabled={loading}
                   >
@@ -246,7 +237,7 @@ function PatientDashboard() {
 
     try {
       setLoading(true)
-      
+
       // Cargar datos del paciente
       const patientData = await patientsService.getByUserId(user.id)
       setPatient(patientData)
@@ -299,66 +290,34 @@ function PatientDashboard() {
 
   return (
     <div className="min-h-screen bg-slate-50">
-      {/* Header */}
-      <section className="bg-linear-to-br from-sky-50 to-blue-50 py-8 border-b border-slate-200">
-        <div className="container mx-auto px-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-2xl lg:text-3xl font-bold text-slate-900">
-                Bienvenido, {patient?.first_name || 'Paciente'}
-              </h1>
-              <p className="text-slate-600">Gestiona tus citas y revisa tu historial médico</p>
-            </div>
-            <div className="flex items-center gap-4">
-              <Button asChild className="bg-sky-600 hover:bg-sky-700">
-                <Link href="/agendar">
-                  <Calendar className="mr-2 h-4 w-4" />
-                  Nueva cita
-                </Link>
-              </Button>
-              <Button 
-                variant="outline" 
-                size="sm"
-                onClick={() => signOut()}
-              >
-                Cerrar sesión
-              </Button>
-            </div>
-          </div>
-        </div>
-      </section>
-
       {/* Navigation Tabs */}
       <section className="bg-white border-b border-slate-200">
         <div className="container mx-auto px-4">
           <div className="flex gap-8">
             <button
               onClick={() => setActiveTab("citas")}
-              className={`py-4 border-b-2 font-medium transition-colors ${
-                activeTab === "citas"
-                  ? "border-sky-600 text-sky-600"
-                  : "border-transparent text-slate-600 hover:text-slate-900"
-              }`}
+              className={`py-4 border-b-2 font-medium transition-colors ${activeTab === "citas"
+                ? "border-sky-600 text-sky-600"
+                : "border-transparent text-slate-600 hover:text-slate-900"
+                }`}
             >
               Mis citas
             </button>
             <button
               onClick={() => setActiveTab("historial")}
-              className={`py-4 border-b-2 font-medium transition-colors ${
-                activeTab === "historial"
-                  ? "border-sky-600 text-sky-600"
-                  : "border-transparent text-slate-600 hover:text-slate-900"
-              }`}
+              className={`py-4 border-b-2 font-medium transition-colors ${activeTab === "historial"
+                ? "border-sky-600 text-sky-600"
+                : "border-transparent text-slate-600 hover:text-slate-900"
+                }`}
             >
               Historial médico
             </button>
             <button
               onClick={() => setActiveTab("perfil")}
-              className={`py-4 border-b-2 font-medium transition-colors ${
-                activeTab === "perfil"
-                  ? "border-sky-600 text-sky-600"
-                  : "border-transparent text-slate-600 hover:text-slate-900"
-              }`}
+              className={`py-4 border-b-2 font-medium transition-colors ${activeTab === "perfil"
+                ? "border-sky-600 text-sky-600"
+                : "border-transparent text-slate-600 hover:text-slate-900"
+                }`}
             >
               Mi perfil
             </button>
@@ -415,19 +374,18 @@ function PatientDashboard() {
                                   <span className="font-medium">Hora:</span> {appointment.time}
                                 </p>
                                 <span
-                                  className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${
-                                    appointment.status === "confirmada"
-                                      ? "bg-green-100 text-green-700"
-                                      : "bg-yellow-100 text-yellow-700"
-                                  }`}
+                                  className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${appointment.status === "confirmada"
+                                    ? "bg-green-100 text-green-700"
+                                    : "bg-yellow-100 text-yellow-700"
+                                    }`}
                                 >
                                   {appointment.status === "confirmada" ? "Confirmada" : "Pendiente"}
                                 </span>
                               </div>
                             </div>
                             <div className="flex flex-col gap-2">
-                              <Button 
-                                variant="outline" 
+                              <Button
+                                variant="outline"
                                 size="sm"
                                 onClick={() => handleCancelAppointment(appointment.id)}
                                 className="text-red-600 hover:text-red-700 bg-transparent"
@@ -507,12 +465,12 @@ function PatientDashboard() {
                       <div>
                         <p className="text-sm text-slate-600 mb-1">Última visita</p>
                         <p className="font-medium text-slate-900">
-                          {pastAppointments.length > 0 
+                          {pastAppointments.length > 0
                             ? new Date(pastAppointments[0].date).toLocaleDateString("es-ES", {
-                                day: 'numeric',
-                                month: 'long',
-                                year: 'numeric'
-                              })
+                              day: 'numeric',
+                              month: 'long',
+                              year: 'numeric'
+                            })
                             : 'Sin visitas previas'}
                         </p>
                       </div>
@@ -521,10 +479,10 @@ function PatientDashboard() {
                         <p className="font-medium text-slate-900">
                           {upcomingAppointments.length > 0
                             ? new Date(upcomingAppointments[0].date).toLocaleDateString("es-ES", {
-                                day: 'numeric',
-                                month: 'long',
-                                year: 'numeric'
-                              })
+                              day: 'numeric',
+                              month: 'long',
+                              year: 'numeric'
+                            })
                             : 'Sin citas programadas'}
                         </p>
                       </div>
@@ -626,58 +584,58 @@ function PatientProfile({ patient, onUpdate }: { patient: any; onUpdate: () => v
             <div className="grid md:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="first_name">Nombre</Label>
-                <Input 
-                  id="first_name" 
+                <Input
+                  id="first_name"
                   value={formData.first_name}
-                  onChange={(e) => setFormData({...formData, first_name: e.target.value})}
+                  onChange={(e) => setFormData({ ...formData, first_name: e.target.value })}
                 />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="last_name">Apellido</Label>
-                <Input 
-                  id="last_name" 
+                <Input
+                  id="last_name"
                   value={formData.last_name}
-                  onChange={(e) => setFormData({...formData, last_name: e.target.value})}
+                  onChange={(e) => setFormData({ ...formData, last_name: e.target.value })}
                 />
               </div>
             </div>
 
             <div className="space-y-2">
               <Label htmlFor="email">Correo electrónico</Label>
-              <Input 
-                id="email" 
-                type="email" 
+              <Input
+                id="email"
+                type="email"
                 value={formData.email}
-                onChange={(e) => setFormData({...formData, email: e.target.value})}
+                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
               />
             </div>
 
             <div className="space-y-2">
               <Label htmlFor="phone">Teléfono</Label>
-              <Input 
-                id="phone" 
-                type="tel" 
+              <Input
+                id="phone"
+                type="tel"
                 value={formData.phone}
-                onChange={(e) => setFormData({...formData, phone: e.target.value})}
+                onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
               />
             </div>
 
             <div className="space-y-2">
               <Label htmlFor="birth_date">Fecha de nacimiento</Label>
-              <Input 
-                id="birth_date" 
-                type="date" 
+              <Input
+                id="birth_date"
+                type="date"
                 value={formData.birth_date}
-                onChange={(e) => setFormData({...formData, birth_date: e.target.value})}
+                onChange={(e) => setFormData({ ...formData, birth_date: e.target.value })}
               />
             </div>
 
             <div className="space-y-2">
               <Label htmlFor="address">Dirección</Label>
-              <Input 
-                id="address" 
+              <Input
+                id="address"
                 value={formData.address}
-                onChange={(e) => setFormData({...formData, address: e.target.value})}
+                onChange={(e) => setFormData({ ...formData, address: e.target.value })}
                 placeholder="Calle Principal 123, Ciudad"
               />
             </div>
@@ -687,19 +645,19 @@ function PatientProfile({ patient, onUpdate }: { patient: any; onUpdate: () => v
               <div className="grid md:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="blood_type">Tipo de sangre</Label>
-                  <Input 
-                    id="blood_type" 
+                  <Input
+                    id="blood_type"
                     value={formData.blood_type}
-                    onChange={(e) => setFormData({...formData, blood_type: e.target.value})}
+                    onChange={(e) => setFormData({ ...formData, blood_type: e.target.value })}
                     placeholder="O+"
                   />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="allergies">Alergias</Label>
-                  <Input 
-                    id="allergies" 
+                  <Input
+                    id="allergies"
                     value={formData.allergies}
-                    onChange={(e) => setFormData({...formData, allergies: e.target.value})}
+                    onChange={(e) => setFormData({ ...formData, allergies: e.target.value })}
                     placeholder="Penicilina"
                   />
                 </div>
@@ -707,8 +665,8 @@ function PatientProfile({ patient, onUpdate }: { patient: any; onUpdate: () => v
             </div>
 
             <div className="flex gap-4">
-              <Button 
-                type="submit" 
+              <Button
+                type="submit"
                 className="bg-sky-600 hover:bg-sky-700"
                 disabled={loading}
               >
@@ -721,8 +679,8 @@ function PatientProfile({ patient, onUpdate }: { patient: any; onUpdate: () => v
                   'Guardar cambios'
                 )}
               </Button>
-              <Button 
-                type="button" 
+              <Button
+                type="button"
                 variant="outline"
                 onClick={onUpdate}
               >

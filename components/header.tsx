@@ -1,15 +1,17 @@
 "use client"
 
 import Link from "next/link"
-import Image from "next/image" 
+import Image from "next/image"
 import { Button } from "@/components/ui/button"
-import { Calendar, Menu, X } from "lucide-react"
+import { Calendar, Menu, X, User, LogOut } from "lucide-react"
 import { useState } from "react"
 import { usePathname } from "next/navigation"
+import { useAuth } from "@/contexts/AuthContext"
 
 export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const pathname = usePathname()
+  const { user, loading, signOut } = useAuth()
 
   const isActive = (path: string) => {
     if (path === "/") return pathname === "/"
@@ -23,11 +25,11 @@ export function Header() {
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2">
             <Image
-              src="/logo.png" 
+              src="/logo.png"
               alt="Logo de Dentalite"
-              width={98} 
-              height={98} 
-              priority 
+              width={98}
+              height={98}
+              priority
             />
             <span className="font-bold text-xl text-slate-900">Dentalite</span>
           </Link>
@@ -36,67 +38,97 @@ export function Header() {
           <nav className="hidden md:flex items-center gap-6">
             <Link
               href="/"
-              className={`transition-colors ${
-                isActive("/") && pathname === "/"
-                  ? "text-sky-600 font-semibold"
-                  : "text-slate-600 hover:text-sky-600"
-              }`}
+              className={`transition-colors ${isActive("/") && pathname === "/"
+                ? "text-sky-600 font-semibold"
+                : "text-slate-600 hover:text-sky-600"
+                }`}
             >
               Inicio
             </Link>
             <Link
               href="/sobre-nosotros"
-              className={`transition-colors ${
-                isActive("/sobre-nosotros")
-                  ? "text-sky-600 font-semibold"
-                  : "text-slate-600 hover:text-sky-600"
-              }`}
+              className={`transition-colors ${isActive("/sobre-nosotros")
+                ? "text-sky-600 font-semibold"
+                : "text-slate-600 hover:text-sky-600"
+                }`}
             >
               Sobre nosotros
             </Link>
             <Link
               href="/servicios"
-              className={`transition-colors ${
-                isActive("/servicios")
-                  ? "text-sky-600 font-semibold"
-                  : "text-slate-600 hover:text-sky-600"
-              }`}
+              className={`transition-colors ${isActive("/servicios")
+                ? "text-sky-600 font-semibold"
+                : "text-slate-600 hover:text-sky-600"
+                }`}
             >
               Servicios
             </Link>
             <Link
               href="/blog"
-              className={`transition-colors ${
-                isActive("/blog")
-                  ? "text-sky-600 font-semibold"
-                  : "text-slate-600 hover:text-sky-600"
-              }`}
+              className={`transition-colors ${isActive("/blog")
+                ? "text-sky-600 font-semibold"
+                : "text-slate-600 hover:text-sky-600"
+                }`}
             >
               Blog
             </Link>
             <Link
               href="/contacto"
-              className={`transition-colors ${
-                isActive("/contacto")
-                  ? "text-sky-600 font-semibold"
-                  : "text-slate-600 hover:text-sky-600"
-              }`}
+              className={`transition-colors ${isActive("/contacto")
+                ? "text-sky-600 font-semibold"
+                : "text-slate-600 hover:text-sky-600"
+                }`}
             >
               Contacto
             </Link>
           </nav>
 
-          {/* Desktop CTA */}
-          <div className="hidden md:flex items-center gap-4">
-            <Button asChild variant="ghost">
-              <Link href="/pacientes">Área de pacientes</Link>
-            </Button>
-            <Button asChild className="bg-sky-600 hover:bg-sky-700">
-              <Link href="/agendar">
-                <Calendar className="mr-2 h-4 w-4" />
-                Agendar cita
-              </Link>
-            </Button>
+          {/* Desktop CTA - Dynamic based on auth */}
+          <div className="hidden md:flex items-center gap-3">
+            {!loading && (
+              <>
+                {user ? (
+                  <>
+                    <Button asChild variant="ghost" className="gap-2">
+                      <Link href="/pacientes">
+                        <User className="h-4 w-4" />
+                        Mi cuenta
+                      </Link>
+                    </Button>
+                    <Button asChild className="bg-sky-600 hover:bg-sky-700">
+                      <Link href="/agendar">
+                        <Calendar className="mr-2 h-4 w-4" />
+                        Agendar cita
+                      </Link>
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => signOut()}
+                      className="gap-2"
+                    >
+                      <LogOut className="h-4 w-4" />
+                      Salir
+                    </Button>
+                  </>
+                ) : (
+                  <>
+                    <Button asChild variant="outline">
+                      <Link href="/pacientes">
+                        <User className="mr-2 h-4 w-4" />
+                        Iniciar sesión
+                      </Link>
+                    </Button>
+                    <Button asChild className="bg-sky-600 hover:bg-sky-700">
+                      <Link href="/agendar">
+                        <Calendar className="mr-2 h-4 w-4" />
+                        Agendar cita
+                      </Link>
+                    </Button>
+                  </>
+                )}
+              </>
+            )}
           </div>
 
           {/* Mobile Menu Button */}
@@ -119,66 +151,94 @@ export function Header() {
             <nav className="flex flex-col gap-4">
               <Link
                 href="/"
-                className={`transition-colors ${
-                  isActive("/") && pathname === "/"
-                    ? "text-sky-600 font-semibold"
-                    : "text-slate-600 hover:text-sky-600"
-                }`}
+                className={`transition-colors ${isActive("/") && pathname === "/"
+                  ? "text-sky-600 font-semibold"
+                  : "text-slate-600 hover:text-sky-600"
+                  }`}
                 onClick={() => setMobileMenuOpen(false)}
               >
                 Inicio
               </Link>
               <Link
                 href="/sobre-nosotros"
-                className={`transition-colors ${
-                  isActive("/sobre-nosotros")
-                    ? "text-sky-600 font-semibold"
-                    : "text-slate-600 hover:text-sky-600"
-                }`}
+                className={`transition-colors ${isActive("/sobre-nosotros")
+                  ? "text-sky-600 font-semibold"
+                  : "text-slate-600 hover:text-sky-600"
+                  }`}
                 onClick={() => setMobileMenuOpen(false)}
               >
                 Sobre nosotros
               </Link>
               <Link
                 href="/servicios"
-                className={`transition-colors ${
-                  isActive("/servicios")
-                    ? "text-sky-600 font-semibold"
-                    : "text-slate-600 hover:text-sky-600"
-                }`}
+                className={`transition-colors ${isActive("/servicios")
+                  ? "text-sky-600 font-semibold"
+                  : "text-slate-600 hover:text-sky-600"
+                  }`}
                 onClick={() => setMobileMenuOpen(false)}
               >
                 Servicios
               </Link>
               <Link
                 href="/blog"
-                className={`transition-colors ${
-                  isActive("/blog")
-                    ? "text-sky-600 font-semibold"
-                    : "text-slate-600 hover:text-sky-600"
-                }`}
+                className={`transition-colors ${isActive("/blog")
+                  ? "text-sky-600 font-semibold"
+                  : "text-slate-600 hover:text-sky-600"
+                  }`}
                 onClick={() => setMobileMenuOpen(false)}
               >
                 Blog
               </Link>
               <Link
                 href="/contacto"
-                className={`transition-colors ${
-                  isActive("/contacto")
-                    ? "text-sky-600 font-semibold"
-                    : "text-slate-600 hover:text-sky-600"
-                }`}
+                className={`transition-colors ${isActive("/contacto")
+                  ? "text-sky-600 font-semibold"
+                  : "text-slate-600 hover:text-sky-600"
+                  }`}
                 onClick={() => setMobileMenuOpen(false)}
               >
                 Contacto
               </Link>
-              <Link
-                href="/pacientes"
-                className="text-slate-600 hover:text-sky-600 transition-colors"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                Área de pacientes
-              </Link>
+
+              {/* Mobile Auth Buttons */}
+              {!loading && (
+                <>
+                  {user ? (
+                    <>
+                      <Link
+                        href="/pacientes"
+                        className="text-slate-600 hover:text-sky-600 transition-colors flex items-center gap-2"
+                        onClick={() => setMobileMenuOpen(false)}
+                      >
+                        <User className="h-4 w-4" />
+                        Mi cuenta
+                      </Link>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => {
+                          signOut()
+                          setMobileMenuOpen(false)
+                        }}
+                        className="gap-2 justify-start"
+                      >
+                        <LogOut className="h-4 w-4" />
+                        Cerrar sesión
+                      </Button>
+                    </>
+                  ) : (
+                    <Link
+                      href="/pacientes"
+                      className="text-slate-600 hover:text-sky-600 transition-colors flex items-center gap-2"
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      <User className="h-4 w-4" />
+                      Iniciar sesión
+                    </Link>
+                  )}
+                </>
+              )}
+
               <Button asChild className="bg-sky-600 hover:bg-sky-700">
                 <Link href="/agendar" onClick={() => setMobileMenuOpen(false)}>
                   <Calendar className="mr-2 h-4 w-4" />

@@ -114,19 +114,19 @@ function LoginPage() {
                 </p>
               </CardHeader>
               <CardContent className="p-8">
-                {error && (
-                  <div className="mb-6 p-4 bg-linear-to-r from-red-50 to-rose-50 border-2 border-red-200 rounded-xl flex items-start gap-3 animate-fade-in">
-                    <div className="bg-red-100 p-2 rounded-full shrink-0">
-                      <AlertCircle className="h-5 w-5 text-red-600" />
+                <form onSubmit={handleSubmit} className="space-y-5">
+                  {error && (
+                    <div className="mb-6 p-4 bg-linear-to-r from-red-50 to-rose-50 border-2 border-red-200 rounded-xl flex items-start gap-3 animate-fade-in">
+                      <div className="bg-red-100 p-2 rounded-full shrink-0">
+                        <AlertCircle className="h-5 w-5 text-red-600" />
+                      </div>
+                      <div>
+                        <p className="font-semibold text-red-900">Error</p>
+                        <p className="text-sm text-red-700">{error}</p>
+                      </div>
                     </div>
-                    <div>
-                      <p className="font-semibold text-red-900">Error</p>
-                      <p className="text-sm text-red-700">{error}</p>
-                    </div>
-                  </div>
-                )}
+                  )}
 
-                <div className="space-y-5">
                   {!isLogin && (
                     <>
                       <div className="grid grid-cols-2 gap-4">
@@ -211,23 +211,23 @@ function LoginPage() {
                       </>
                     )}
                   </Button>
-                </div>
 
-                <div className="mt-6 text-center">
-                  <p className="text-sm text-slate-600">
-                    {isLogin ? "¿No tienes cuenta?" : "¿Ya tienes cuenta?"}{" "}
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setIsLogin(!isLogin)
-                        setError("")
-                      }}
-                      className="text-sky-600 hover:text-sky-700 font-bold hover:underline"
-                    >
-                      {isLogin ? "Regístrate aquí" : "Inicia sesión"}
-                    </button>
-                  </p>
-                </div>
+                  <div className="mt-6 text-center">
+                    <p className="text-sm text-slate-600">
+                      {isLogin ? "¿No tienes cuenta?" : "¿Ya tienes cuenta?"}{" "}
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setIsLogin(!isLogin)
+                          setError("")
+                        }}
+                        className="text-sky-600 hover:text-sky-700 font-bold hover:underline"
+                      >
+                        {isLogin ? "Regístrate aquí" : "Inicia sesión"}
+                      </button>
+                    </p>
+                  </div>
+                </form>
               </CardContent>
             </Card>
 
@@ -640,6 +640,8 @@ function PatientDashboard() {
 function PatientProfile({ patient, onUpdate }: { patient: any; onUpdate: () => void }) {
   const [loading, setLoading] = useState(false)
   const [isEditing, setIsEditing] = useState(false)
+  const [successMessage, setSuccessMessage] = useState("")
+  const [errorMessage, setErrorMessage] = useState("")
   const [formData, setFormData] = useState({
     first_name: patient.first_name,
     last_name: patient.last_name,
@@ -654,196 +656,359 @@ function PatientProfile({ patient, onUpdate }: { patient: any; onUpdate: () => v
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
+    setErrorMessage("")
+    setSuccessMessage("")
 
     try {
       await patientsService.update(patient.id, formData)
-      alert('Perfil actualizado exitosamente')
+      setSuccessMessage('Perfil actualizado exitosamente')
       setIsEditing(false)
+      setTimeout(() => setSuccessMessage(""), 3000)
       onUpdate()
     } catch (error) {
       console.error('Error updating profile:', error)
-      alert('Error al actualizar el perfil')
+      setErrorMessage('Error al actualizar el perfil. Intenta de nuevo.')
     } finally {
       setLoading(false)
     }
   }
 
-  return (
-    <div className="max-w-4xl mx-auto">
-      <div className="flex items-center justify-between mb-8">
-        <div className="flex items-center gap-3">
-          <div className="p-2 bg-sky-100 rounded-lg">
-            <User className="h-6 w-6 text-sky-600" />
-          </div>
-          <div>
-            <h2 className="text-2xl font-bold text-slate-900">Mi perfil</h2>
-            <p className="text-slate-600">Administra tu información personal</p>
-          </div>
-        </div>
-        {!isEditing && (
-          <Button
-            onClick={() => setIsEditing(true)}
-            className="bg-linear-to-r from-sky-600 to-blue-600 hover:from-sky-700 hover:to-blue-700 shadow-lg shadow-sky-500/30"
-          >
-            <Edit className="mr-2 h-4 w-4" />
-            Editar perfil
-          </Button>
-        )}
-      </div>
+  const calculateAge = (birthDate: string) => {
+    if (!birthDate) return null
+    const today = new Date()
+    const birth = new Date(birthDate)
+    let age = today.getFullYear() - birth.getFullYear()
+    const monthDiff = today.getMonth() - birth.getMonth()
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
+      age--
+    }
+    return age
+  }
 
-      <Card className="border-0 shadow-2xl shadow-slate-200/50 overflow-hidden">
-        <div className="absolute top-0 left-0 w-full h-1 bg-linear-to-r from-sky-500 via-blue-500 to-sky-500"></div>
-        <CardContent className="p-8">
-          {/* Header del perfil */}
-          <div className="flex items-center gap-6 pb-8 border-b border-slate-200 mb-8">
-            <div className="relative">
-              <div className="bg-linear-to-br from-sky-500 to-blue-600 w-24 h-24 rounded-2xl flex items-center justify-center shadow-xl shadow-sky-500/30">
-                <User className="h-12 w-12 text-white" />
-              </div>
-              <div className="absolute -bottom-2 -right-2 bg-green-500 w-8 h-8 rounded-full border-4 border-white flex items-center justify-center">
-                <CheckCircle2 className="h-4 w-4 text-white" />
-              </div>
+  const age = calculateAge(formData.birth_date)
+
+  return (
+    <div className="max-w-4xl mx-auto space-y-6">
+      {/* Header Section */}
+      <div className="relative overflow-hidden rounded-2xl bg-linear-to-br from-sky-500 via-blue-500 to-sky-600 p-8 shadow-lg">
+        <div className="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full -mr-20 -mt-20"></div>
+        <div className="absolute bottom-0 left-0 w-32 h-32 bg-white/10 rounded-full -ml-16 -mb-16"></div>
+        
+        <div className="relative z-10 flex items-start justify-between">
+          <div className="flex items-start gap-4">
+            <div className="p-3 bg-white/20 backdrop-blur-sm rounded-xl border border-white/30">
+              <User className="h-8 w-8 text-white" />
             </div>
             <div>
-              <h3 className="font-bold text-2xl text-slate-900">
+              <h3 className="font-bold text-3xl text-white">
                 {patient.first_name} {patient.last_name}
               </h3>
-              <p className="text-slate-600 flex items-center gap-2 mt-1">
-                <Sparkles className="h-4 w-4 text-sky-600" />
+              <p className="text-blue-100 flex items-center gap-2 mt-2">
+                <Sparkles className="h-4 w-4" />
                 Paciente desde {new Date(patient.created_at).getFullYear()}
               </p>
-            </div>
-          </div>
-
-          <div className="grid md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="first_name">Nombre</Label>
-              <Input
-                id="first_name"
-                value={formData.first_name}
-                onChange={(e) => setFormData({ ...formData, first_name: e.target.value })}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="last_name">Apellido</Label>
-              <Input
-                id="last_name"
-                value={formData.last_name}
-                onChange={(e) => setFormData({ ...formData, last_name: e.target.value })}
-              />
-            </div>
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="email">Correo electrónico</Label>
-            <Input
-              id="email"
-              type="email"
-              value={formData.email}
-              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="phone">Teléfono</Label>
-            <Input
-              id="phone"
-              type="tel"
-              value={formData.phone}
-              onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="birth_date">Fecha de nacimiento</Label>
-            <Input
-              id="birth_date"
-              type="date"
-              value={formData.birth_date}
-              onChange={(e) => setFormData({ ...formData, birth_date: e.target.value })}
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="address">Dirección</Label>
-            <Input
-              id="address"
-              value={formData.address}
-              onChange={(e) => setFormData({ ...formData, address: e.target.value })}
-              placeholder="Calle Principal 123, Ciudad"
-            />
-          </div>
-
-          {/* Información Médica */}
-          <div className="pt-6 border-t border-slate-200">
-            <h3 className="font-bold text-lg mb-4 text-slate-900 flex items-center gap-2">
-              <Stethoscope className="h-5 w-5 text-red-600" />
-              Información Médica
-            </h3>
-            <div className="grid md:grid-cols-2 gap-6">
-              <div className="space-y-2">
-                <Label htmlFor="blood_type">Tipo de sangre</Label>
-                <Input
-                  id="blood_type"
-                  value={formData.blood_type}
-                  onChange={(e) => setFormData({ ...formData, blood_type: e.target.value })}
-                  placeholder="O+"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="allergies">Alergias</Label>
-                <Input
-                  id="allergies"
-                  value={formData.allergies}
-                  onChange={(e) => setFormData({ ...formData, allergies: e.target.value })}
-                  placeholder="Penicilina"
-                />
+              <div className="flex gap-4 mt-3 text-sm text-blue-50">
+                {age && <span className="flex items-center gap-1"><Calendar className="h-4 w-4" /> {age} años</span>}
+                <span className="flex items-center gap-1"><Mail className="h-4 w-4" /> {formData.email}</span>
+                <span className="flex items-center gap-1"><Phone className="h-4 w-4" /> {formData.phone}</span>
               </div>
             </div>
           </div>
 
-          <div className="flex gap-4">
+          {!isEditing && (
             <Button
-              type="submit"
-              className="bg-sky-600 hover:bg-sky-700"
-              disabled={loading}
+              onClick={() => setIsEditing(true)}
+              className="bg-white text-sky-600 hover:bg-blue-50 shadow-lg"
             >
-              {loading ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Guardando...
-                </>
-              ) : (
-                'Guardar cambios'
-              )}
+              <Edit className="mr-2 h-4 w-4" />
+              Editar
             </Button>
-            <Button
-              type="button"
-              variant="outline"
-              onClick={onUpdate}
-            >
-              Cancelar
-            </Button>
-          </div>
-        </form>
-      </CardContent>
-    </Card>
-
-      {
-    !isEditing && (
-      <div className="mt-6 p-5 bg-linear-to-r from-sky-50 to-blue-50 rounded-xl border border-sky-200">
-        <div className="flex items-start gap-3">
-          <Shield className="h-6 w-6 text-sky-600 shrink-0 mt-0.5" />
-          <div>
-            <p className="font-semibold text-sky-900 mb-1">Información protegida</p>
-            <p className="text-sm text-sky-800 leading-relaxed">
-              Todos tus datos están encriptados y protegidos bajo las normativas de privacidad médica.
-            </p>
-          </div>
+          )}
         </div>
       </div>
-    )
-  }
-    </div >
+
+      {/* Messages */}
+      {successMessage && (
+        <div className="p-4 bg-green-50 border-2 border-green-200 rounded-xl flex items-start gap-3 animate-fade-in">
+          <div className="bg-green-100 p-2 rounded-full shrink-0">
+            <CheckCircle2 className="h-5 w-5 text-green-600" />
+          </div>
+          <div>
+            <p className="font-semibold text-green-900">Éxito</p>
+            <p className="text-sm text-green-700">{successMessage}</p>
+          </div>
+        </div>
+      )}
+
+      {errorMessage && (
+        <div className="p-4 bg-red-50 border-2 border-red-200 rounded-xl flex items-start gap-3 animate-fade-in">
+          <div className="bg-red-100 p-2 rounded-full shrink-0">
+            <AlertCircle className="h-5 w-5 text-red-600" />
+          </div>
+          <div>
+            <p className="font-semibold text-red-900">Error</p>
+            <p className="text-sm text-red-700">{errorMessage}</p>
+          </div>
+        </div>
+      )}
+
+      {isEditing ? (
+        /* Editing Form */
+        <Card className="border-0 shadow-xl shadow-slate-200/50 overflow-hidden">
+          <div className="absolute top-0 left-0 w-full h-1 bg-linear-to-r from-sky-500 to-blue-500"></div>
+          <CardHeader className="bg-linear-to-br from-sky-50 to-blue-50 border-b border-sky-100">
+            <CardTitle className="text-xl">Editar información personal</CardTitle>
+          </CardHeader>
+          <CardContent className="p-6">
+            <form onSubmit={handleSubmit} className="space-y-6">
+              {/* Información Personal */}
+              <div className="space-y-4">
+                <h3 className="font-bold text-lg text-slate-900 flex items-center gap-2">
+                  <User className="h-5 w-5 text-sky-600" />
+                  Información Personal
+                </h3>
+                <div className="grid md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="first_name">Nombre *</Label>
+                    <Input
+                      id="first_name"
+                      required
+                      value={formData.first_name}
+                      onChange={(e) => setFormData({ ...formData, first_name: e.target.value })}
+                      placeholder="Tu nombre"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="last_name">Apellido *</Label>
+                    <Input
+                      id="last_name"
+                      required
+                      value={formData.last_name}
+                      onChange={(e) => setFormData({ ...formData, last_name: e.target.value })}
+                      placeholder="Tu apellido"
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="email">Correo electrónico *</Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    required
+                    value={formData.email}
+                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                    placeholder="correo@ejemplo.com"
+                  />
+                  <p className="text-xs text-slate-500">Este es tu correo de inicio de sesión</p>
+                </div>
+
+                <div className="grid md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="phone">Teléfono *</Label>
+                    <Input
+                      id="phone"
+                      type="tel"
+                      required
+                      value={formData.phone}
+                      onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                      placeholder="+52 993 123 4567"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="birth_date">Fecha de nacimiento</Label>
+                    <Input
+                      id="birth_date"
+                      type="date"
+                      value={formData.birth_date}
+                      onChange={(e) => setFormData({ ...formData, birth_date: e.target.value })}
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="address">Dirección</Label>
+                  <Input
+                    id="address"
+                    value={formData.address}
+                    onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+                    placeholder="Calle Principal 123, Ciudad, Estado"
+                  />
+                </div>
+              </div>
+
+              {/* Información Médica */}
+              <div className="space-y-4 pt-6 border-t border-slate-200">
+                <h3 className="font-bold text-lg text-slate-900 flex items-center gap-2">
+                  <Stethoscope className="h-5 w-5 text-red-600" />
+                  Información Médica
+                </h3>
+                <div className="grid md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="blood_type">Tipo de sangre</Label>
+                    <select
+                      id="blood_type"
+                      value={formData.blood_type}
+                      onChange={(e) => setFormData({ ...formData, blood_type: e.target.value })}
+                      className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500"
+                    >
+                      <option value="">Selecciona tu tipo de sangre</option>
+                      <option value="O+">O+</option>
+                      <option value="O-">O-</option>
+                      <option value="A+">A+</option>
+                      <option value="A-">A-</option>
+                      <option value="B+">B+</option>
+                      <option value="B-">B-</option>
+                      <option value="AB+">AB+</option>
+                      <option value="AB-">AB-</option>
+                    </select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="allergies">Alergias</Label>
+                    <Input
+                      id="allergies"
+                      value={formData.allergies}
+                      onChange={(e) => setFormData({ ...formData, allergies: e.target.value })}
+                      placeholder="Ej: Penicilina, Aspirina"
+                    />
+                    <p className="text-xs text-slate-500">Separa múltiples alergias con comas</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Buttons */}
+              <div className="flex gap-3 pt-6 border-t border-slate-200">
+                <Button
+                  type="submit"
+                  className="bg-sky-600 hover:bg-sky-700 text-white"
+                  disabled={loading}
+                >
+                  {loading ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Guardando...
+                    </>
+                  ) : (
+                    <>
+                      <CheckCircle2 className="mr-2 h-4 w-4" />
+                      Guardar cambios
+                    </>
+                  )}
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => {
+                    setIsEditing(false)
+                    setFormData({
+                      first_name: patient.first_name,
+                      last_name: patient.last_name,
+                      email: patient.email,
+                      phone: patient.phone,
+                      birth_date: patient.birth_date || '',
+                      address: patient.address || '',
+                      blood_type: patient.blood_type || '',
+                      allergies: patient.allergies || '',
+                    })
+                  }}
+                >
+                  Cancelar
+                </Button>
+              </div>
+            </form>
+          </CardContent>
+        </Card>
+      ) : (
+        /* View Mode */
+        <>
+          <div className="grid md:grid-cols-2 gap-6">
+            {/* Información Personal */}
+            <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden">
+              <div className="absolute top-0 left-0 w-full h-1 bg-linear-to-r from-sky-500 to-blue-500"></div>
+              <CardHeader className="bg-linear-to-br from-sky-50 to-blue-50 border-b border-sky-100">
+                <CardTitle className="flex items-center gap-2">
+                  <User className="h-5 w-5 text-sky-600" />
+                  Información Personal
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="p-6 space-y-4">
+                <div className="p-4 bg-slate-50 rounded-lg border border-slate-200">
+                  <p className="text-xs text-slate-600 font-medium uppercase mb-1">Correo</p>
+                  <p className="text-lg font-semibold text-slate-900 flex items-center gap-2">
+                    <Mail className="h-4 w-4 text-sky-600" />
+                    {formData.email}
+                  </p>
+                </div>
+                <div className="p-4 bg-slate-50 rounded-lg border border-slate-200">
+                  <p className="text-xs text-slate-600 font-medium uppercase mb-1">Teléfono</p>
+                  <p className="text-lg font-semibold text-slate-900 flex items-center gap-2">
+                    <Phone className="h-4 w-4 text-sky-600" />
+                    {formData.phone}
+                  </p>
+                </div>
+                {formData.birth_date && (
+                  <div className="p-4 bg-slate-50 rounded-lg border border-slate-200">
+                    <p className="text-xs text-slate-600 font-medium uppercase mb-1">Edad</p>
+                    <p className="text-lg font-semibold text-slate-900 flex items-center gap-2">
+                      <Calendar className="h-4 w-4 text-sky-600" />
+                      {age} años ({formData.birth_date})
+                    </p>
+                  </div>
+                )}
+                {formData.address && (
+                  <div className="p-4 bg-slate-50 rounded-lg border border-slate-200">
+                    <p className="text-xs text-slate-600 font-medium uppercase mb-1">Dirección</p>
+                    <p className="text-lg font-semibold text-slate-900 flex items-center gap-2">
+                      <MapPin className="h-4 w-4 text-sky-600" />
+                      {formData.address}
+                    </p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
+            {/* Información Médica */}
+            <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden">
+              <div className="absolute top-0 left-0 w-full h-1 bg-linear-to-r from-red-500 to-rose-500"></div>
+              <CardHeader className="bg-linear-to-br from-red-50 to-rose-50 border-b border-red-100">
+                <CardTitle className="flex items-center gap-2">
+                  <Stethoscope className="h-5 w-5 text-red-600" />
+                  Información Médica
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="p-6 space-y-4">
+                <div className="p-4 bg-red-50 rounded-lg border border-red-200">
+                  <p className="text-xs text-red-600 font-medium uppercase mb-1">Tipo de sangre</p>
+                  <p className="text-2xl font-bold text-red-700">
+                    {formData.blood_type || 'No registrado'}
+                  </p>
+                </div>
+                <div className="p-4 bg-amber-50 rounded-lg border border-amber-200">
+                  <p className="text-xs text-amber-600 font-medium uppercase mb-1">Alergias</p>
+                  <p className="text-lg font-semibold text-amber-900">
+                    {formData.allergies || 'Sin alergias registradas'}
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Security Info */}
+          <div className="p-6 bg-linear-to-br from-sky-50 to-blue-50 rounded-xl border border-sky-200 shadow-sm">
+            <div className="flex items-start gap-4">
+              <div className="p-3 bg-sky-100 rounded-lg shrink-0">
+                <Shield className="h-6 w-6 text-sky-600" />
+              </div>
+              <div>
+                <p className="font-bold text-sky-900 mb-1">Seguridad y privacidad</p>
+                <p className="text-sm text-sky-800 leading-relaxed">
+                  Tu información está encriptada y protegida bajo las normativas de privacidad médica internacional. Tus datos solo son accesibles por ti y por el equipo médico autorizado.
+                </p>
+              </div>
+            </div>
+          </div>
+        </>
+      )}
+    </div>
   )
 }

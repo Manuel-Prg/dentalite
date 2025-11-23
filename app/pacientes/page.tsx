@@ -1,13 +1,12 @@
 "use client"
 
 import type React from "react"
-
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { useState, useEffect } from "react"
-import { Calendar, FileText, Lock, User, Loader2, AlertCircle } from "lucide-react"
+import { Calendar, FileText, Lock, User, Loader2, AlertCircle, Sparkles, LogOut, Edit, CheckCircle2, Clock, Stethoscope, Mail, Phone, MapPin, Shield } from "lucide-react"
 import Link from "next/link"
 import { useAuth } from "@/contexts/AuthContext"
 import { useRouter } from "next/navigation"
@@ -17,21 +16,21 @@ export default function PacientesPage() {
   const { user, loading } = useAuth()
   const router = useRouter()
 
-  // Mientras carga, mostrar un spinner
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-sky-600" />
+      <div className="min-h-screen bg-linear-to-br from-slate-50 via-blue-50 to-sky-50 flex items-center justify-center">
+        <div className="text-center">
+          <Loader2 className="h-12 w-12 animate-spin text-sky-600 mx-auto mb-4" />
+          <p className="text-slate-600">Cargando...</p>
+        </div>
       </div>
     )
   }
 
-  // Si no está autenticado, mostrar login
   if (!user) {
     return <LoginPage />
   }
 
-  // Si está autenticado, mostrar dashboard
   return <PatientDashboard />
 }
 
@@ -74,35 +73,60 @@ function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50">
-      <section className="bg-linear-to-br from-sky-50 to-blue-50 py-12 lg:py-16">
-        <div className="container mx-auto px-4">
+    <div className="min-h-screen bg-linear-to-br from-slate-50 via-blue-50 to-sky-50">
+      {/* Hero Section */}
+      <section className="relative py-16 lg:py-20 overflow-hidden">
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute top-20 right-10 w-72 h-72 bg-sky-300/20 rounded-full blur-3xl animate-pulse-slow"></div>
+          <div className="absolute bottom-20 left-10 w-96 h-96 bg-blue-300/20 rounded-full blur-3xl animate-pulse-slow" style={{ animationDelay: '1s' }}></div>
+        </div>
+
+        <div className="container mx-auto px-4 relative z-10">
           <div className="max-w-md mx-auto text-center">
-            <div className="bg-sky-600 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-              <User className="h-8 w-8 text-white" />
+            <div className="relative inline-flex mb-6">
+              <div className="absolute inset-0 bg-sky-400/30 rounded-full blur-2xl animate-pulse-slow"></div>
+              <div className="relative bg-linear-to-br from-sky-500 to-blue-600 w-20 h-20 rounded-full flex items-center justify-center shadow-xl shadow-sky-500/30">
+                <User className="h-10 w-10 text-white" />
+              </div>
             </div>
-            <h1 className="text-3xl lg:text-4xl font-bold mb-4 text-slate-900">Área de pacientes</h1>
-            <p className="text-slate-600 text-pretty">Accede a tu historial médico y gestiona tus citas</p>
+            <h1 className="text-4xl lg:text-5xl font-bold mb-4 text-slate-900 animate-fade-in-up">
+              Área de pacientes
+            </h1>
+            <p className="text-lg text-slate-600 text-pretty animate-fade-in-up stagger-1">
+              Accede a tu historial médico y gestiona tus citas
+            </p>
           </div>
         </div>
       </section>
 
-      <section className="py-12">
+      {/* Login Form */}
+      <section className="pb-16">
         <div className="container mx-auto px-4">
           <div className="max-w-md mx-auto">
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-2xl text-center">{isLogin ? "Iniciar sesión" : "Crear cuenta"}</CardTitle>
+            <Card className="border-0 shadow-2xl shadow-slate-200/50 overflow-hidden animate-fade-in-up stagger-2">
+              <div className="absolute top-0 left-0 w-full h-1 bg-linear-to-r from-sky-500 via-blue-500 to-sky-500"></div>
+              <CardHeader className="bg-linear-to-br from-sky-50 to-blue-50 border-b border-sky-100">
+                <CardTitle className="text-2xl text-center">
+                  {isLogin ? "Iniciar sesión" : "Crear cuenta"}
+                </CardTitle>
+                <p className="text-center text-slate-600 text-sm mt-2">
+                  {isLogin ? "Ingresa tus credenciales" : "Completa el formulario"}
+                </p>
               </CardHeader>
-              <CardContent>
+              <CardContent className="p-8">
                 {error && (
-                  <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg flex items-start gap-2">
-                    <AlertCircle className="h-5 w-5 text-red-600 shrink-0 mt-0.5" />
-                    <p className="text-sm text-red-600">{error}</p>
+                  <div className="mb-6 p-4 bg-linear-to-r from-red-50 to-rose-50 border-2 border-red-200 rounded-xl flex items-start gap-3 animate-fade-in">
+                    <div className="bg-red-100 p-2 rounded-full shrink-0">
+                      <AlertCircle className="h-5 w-5 text-red-600" />
+                    </div>
+                    <div>
+                      <p className="font-semibold text-red-900">Error</p>
+                      <p className="text-sm text-red-700">{error}</p>
+                    </div>
                   </div>
                 )}
 
-                <form onSubmit={handleSubmit} className="space-y-4">
+                <div className="space-y-5">
                   {!isLogin && (
                     <>
                       <div className="grid grid-cols-2 gap-4">
@@ -165,7 +189,10 @@ function LoginPage() {
                       onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                     />
                     {!isLogin && (
-                      <p className="text-xs text-slate-500">Mínimo 6 caracteres</p>
+                      <p className="text-xs text-slate-500 flex items-center gap-1">
+                        <Shield className="h-3 w-3" />
+                        Mínimo 6 caracteres
+                      </p>
                     )}
                   </div>
                   <Button
@@ -175,14 +202,16 @@ function LoginPage() {
                   >
                     {loading ? (
                       <>
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        <Loader2 className="mr-2 h-5 w-5 animate-spin" />
                         {isLogin ? "Iniciando sesión..." : "Creando cuenta..."}
                       </>
                     ) : (
-                      isLogin ? "Iniciar sesión" : "Crear cuenta"
+                      <>
+                        {isLogin ? "Iniciar sesión" : "Crear cuenta"}
+                      </>
                     )}
                   </Button>
-                </form>
+                </div>
 
                 <div className="mt-6 text-center">
                   <p className="text-sm text-slate-600">
@@ -193,23 +222,23 @@ function LoginPage() {
                         setIsLogin(!isLogin)
                         setError("")
                       }}
-                      className="text-sky-600 hover:underline font-medium"
+                      className="text-sky-600 hover:text-sky-700 font-bold hover:underline"
                     >
-                      {isLogin ? "Regístrate" : "Inicia sesión"}
+                      {isLogin ? "Regístrate aquí" : "Inicia sesión"}
                     </button>
                   </p>
                 </div>
               </CardContent>
             </Card>
 
-            <div className="mt-8 text-center">
-              <div className="flex items-center justify-center gap-2 text-slate-600 mb-4">
-                <Lock className="h-4 w-4" />
-                <span className="text-sm">Tus datos están protegidos y encriptados</span>
+            <div className="mt-8 text-center space-y-4">
+              <div className="flex items-center justify-center gap-2 text-slate-600">
+                <Lock className="h-5 w-5 text-sky-600" />
+                <span className="text-sm font-medium">Tus datos están protegidos y encriptados</span>
               </div>
               <p className="text-sm text-slate-500">
                 ¿Necesitas ayuda?{" "}
-                <Link href="/contacto" className="text-sky-600 hover:underline">
+                <Link href="/contacto" className="text-sky-600 hover:text-sky-700 font-semibold hover:underline">
                   Contáctanos
                 </Link>
               </p>
@@ -242,7 +271,6 @@ function PatientDashboard() {
       const patientData = await patientsService.getByUserId(user.id)
       setPatient(patientData)
 
-      // Cargar citas del paciente
       if (patientData) {
         const appointmentsData = await appointmentsService.getByPatient(patientData.id)
         setAppointments(appointmentsData || [])
@@ -273,7 +301,7 @@ function PatientDashboard() {
 
     try {
       await appointmentsService.update(appointmentId, { status: 'cancelada' })
-      loadPatientData() // Recargar datos
+      loadPatientData()
     } catch (error) {
       console.error('Error canceling appointment:', error)
       alert('Error al cancelar la cita')
@@ -282,8 +310,11 @@ function PatientDashboard() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-sky-600" />
+      <div className="min-h-screen bg-linear-to-br from-slate-50 via-blue-50 to-sky-50 flex items-center justify-center">
+        <div className="text-center">
+          <Loader2 className="h-12 w-12 animate-spin text-sky-600 mx-auto mb-4" />
+          <p className="text-slate-600">Cargando tu información...</p>
+        </div>
       </div>
     )
   }
@@ -291,7 +322,7 @@ function PatientDashboard() {
   return (
     <div className="min-h-screen bg-slate-50">
       {/* Navigation Tabs */}
-      <section className="bg-white border-b border-slate-200">
+      <section className="bg-white border-b border-slate-200 sticky top-0 z-40 shadow-sm">
         <div className="container mx-auto px-4">
           <div className="flex gap-8">
             <button
@@ -301,6 +332,7 @@ function PatientDashboard() {
                 : "border-transparent text-slate-600 hover:text-slate-900"
                 }`}
             >
+              <Calendar className="h-5 w-5 inline-block mr-2" />
               Mis citas
             </button>
             <button
@@ -310,6 +342,7 @@ function PatientDashboard() {
                 : "border-transparent text-slate-600 hover:text-slate-900"
                 }`}
             >
+              <FileText className="h-5 w-5 inline-block mr-2" />
               Historial médico
             </button>
             <button
@@ -319,6 +352,7 @@ function PatientDashboard() {
                 : "border-transparent text-slate-600 hover:text-slate-900"
                 }`}
             >
+              <User className="h-5 w-5 inline-block mr-2" />
               Mi perfil
             </button>
           </div>
@@ -329,57 +363,88 @@ function PatientDashboard() {
       <section className="py-12">
         <div className="container mx-auto px-4">
           {activeTab === "citas" && (
-            <div className="max-w-4xl mx-auto space-y-8">
+            <div className="max-w-5xl mx-auto space-y-8">
               <div>
-                <h2 className="text-2xl font-bold mb-6 text-slate-900">Próximas citas</h2>
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="p-2 bg-sky-100 rounded-lg">
+                    <Calendar className="h-6 w-6 text-sky-600" />
+                  </div>
+                  <div>
+                    <h2 className="text-2xl font-bold text-slate-900">Próximas citas</h2>
+                    <p className="text-slate-600">Tus citas programadas</p>
+                  </div>
+                </div>
                 {upcomingAppointments.length === 0 ? (
-                  <Card>
-                    <CardContent className="pt-6 text-center py-12">
-                      <Calendar className="h-12 w-12 text-slate-300 mx-auto mb-4" />
-                      <p className="text-slate-600 mb-4">No tienes citas próximas</p>
-                      <Button asChild className="bg-sky-600 hover:bg-sky-700">
-                        <Link href="/agendar">Agendar una cita</Link>
+                  <Card className="border-0 shadow-xl shadow-slate-200/50">
+                    <CardContent className="pt-6 text-center py-16">
+                      <div className="bg-slate-100 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <Calendar className="h-10 w-10 text-slate-400" />
+                      </div>
+                      <h3 className="font-bold text-xl text-slate-900 mb-2">No tienes citas próximas</h3>
+                      <p className="text-slate-600 mb-6">Agenda una cita para comenzar tu tratamiento</p>
+                      <Button asChild className="bg-linear-to-r from-sky-600 to-blue-600 hover:from-sky-700 hover:to-blue-700 shadow-lg shadow-sky-500/30">
+                        <Link href="/agendar">
+                          <Calendar className="mr-2 h-5 w-5" />
+                          Agendar una cita
+                        </Link>
                       </Button>
                     </CardContent>
                   </Card>
                 ) : (
                   <div className="space-y-4">
                     {upcomingAppointments.map((appointment) => (
-                      <Card key={appointment.id}>
+                      <Card key={appointment.id} className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden group">
+                        <div className="absolute top-0 left-0 w-full h-1 bg-linear-to-r from-sky-500 to-blue-500"></div>
                         <CardContent className="p-6">
                           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                             <div className="flex-1">
-                              <div className="flex items-center gap-3 mb-2">
-                                <div className="bg-sky-100 p-2 rounded-lg">
-                                  <Calendar className="h-5 w-5 text-sky-600" />
+                              <div className="flex items-start gap-4 mb-4">
+                                <div className="bg-linear-to-br from-sky-100 to-blue-100 p-3 rounded-xl group-hover:scale-110 transition-transform">
+                                  <Calendar className="h-6 w-6 text-sky-600" />
                                 </div>
                                 <div>
-                                  <h3 className="font-semibold text-lg text-slate-900">{appointment.service}</h3>
-                                  <p className="text-sm text-slate-600">
-                                    {appointment.doctors?.name || 'Doctor por asignar'}
-                                  </p>
+                                  <h3 className="font-bold text-xl text-slate-900 mb-1">{appointment.service}</h3>
+                                  <div className="flex items-center gap-2 text-slate-600">
+                                    <Stethoscope className="h-4 w-4" />
+                                    <p className="text-sm font-medium">
+                                      {appointment.doctors?.name || 'Doctor por asignar'}
+                                    </p>
+                                  </div>
                                 </div>
                               </div>
-                              <div className="ml-12 space-y-1">
-                                <p className="text-slate-600">
-                                  <span className="font-medium">Fecha:</span>{" "}
-                                  {new Date(appointment.date).toLocaleDateString("es-ES", {
-                                    weekday: "long",
-                                    year: "numeric",
-                                    month: "long",
-                                    day: "numeric",
-                                  })}
-                                </p>
-                                <p className="text-slate-600">
-                                  <span className="font-medium">Hora:</span> {appointment.time}
-                                </p>
+                              <div className="ml-16 space-y-2">
+                                <div className="flex items-center gap-2 text-slate-700">
+                                  <Calendar className="h-4 w-4 text-sky-600" />
+                                  <span className="font-semibold">
+                                    {new Date(appointment.date).toLocaleDateString("es-ES", {
+                                      weekday: "long",
+                                      year: "numeric",
+                                      month: "long",
+                                      day: "numeric",
+                                    })}
+                                  </span>
+                                </div>
+                                <div className="flex items-center gap-2 text-slate-700">
+                                  <Clock className="h-4 w-4 text-sky-600" />
+                                  <span className="font-semibold text-lg">{appointment.time}</span>
+                                </div>
                                 <span
                                   className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${appointment.status === "confirmada"
                                     ? "bg-green-100 text-green-700"
                                     : "bg-yellow-100 text-yellow-700"
                                     }`}
                                 >
-                                  {appointment.status === "confirmada" ? "Confirmada" : "Pendiente"}
+                                  {appointment.status === "confirmada" ? (
+                                    <>
+                                      <CheckCircle2 className="h-3 w-3" />
+                                      Confirmada
+                                    </>
+                                  ) : (
+                                    <>
+                                      <Clock className="h-3 w-3" />
+                                      Pendiente
+                                    </>
+                                  )}
                                 </span>
                               </div>
                             </div>
@@ -388,9 +453,9 @@ function PatientDashboard() {
                                 variant="outline"
                                 size="sm"
                                 onClick={() => handleCancelAppointment(appointment.id)}
-                                className="text-red-600 hover:text-red-700 bg-transparent"
+                                className="text-red-600 hover:text-red-700 hover:bg-red-50 border-red-200 hover:border-red-300"
                               >
-                                Cancelar
+                                Cancelar cita
                               </Button>
                             </div>
                           </div>
@@ -402,34 +467,46 @@ function PatientDashboard() {
               </div>
 
               <div>
-                <h2 className="text-2xl font-bold mb-6 text-slate-900">Citas pasadas</h2>
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="p-2 bg-slate-100 rounded-lg">
+                    <FileText className="h-6 w-6 text-slate-600" />
+                  </div>
+                  <div>
+                    <h2 className="text-2xl font-bold text-slate-900">Citas pasadas</h2>
+                    <p className="text-slate-600">Tu historial de citas</p>
+                  </div>
+                </div>
                 {pastAppointments.length === 0 ? (
-                  <Card>
-                    <CardContent className="pt-6 text-center py-8">
+                  <Card className="border-0 shadow-xl shadow-slate-200/50">
+                    <CardContent className="pt-6 text-center py-12">
                       <p className="text-slate-600">No tienes citas anteriores</p>
                     </CardContent>
                   </Card>
                 ) : (
                   <div className="space-y-4">
                     {pastAppointments.map((appointment) => (
-                      <Card key={appointment.id}>
+                      <Card key={appointment.id} className="border-0 shadow-lg hover:shadow-xl transition-all duration-300">
                         <CardContent className="p-6">
-                          <div className="flex items-start gap-3">
-                            <div className="bg-slate-100 p-2 rounded-lg">
-                              <FileText className="h-5 w-5 text-slate-600" />
+                          <div className="flex items-start gap-4">
+                            <div className="bg-slate-100 p-3 rounded-xl">
+                              <FileText className="h-6 w-6 text-slate-600" />
                             </div>
                             <div className="flex-1">
-                              <h3 className="font-semibold text-lg text-slate-900 mb-1">{appointment.service}</h3>
-                              <p className="text-sm text-slate-600 mb-2">
-                                {appointment.doctors?.name || 'Doctor no asignado'}
-                              </p>
-                              <p className="text-sm text-slate-600 mb-2">
-                                {new Date(appointment.date).toLocaleDateString("es-ES")} - {appointment.time}
-                              </p>
+                              <h3 className="font-bold text-lg text-slate-900 mb-1">{appointment.service}</h3>
+                              <div className="space-y-1">
+                                <p className="text-sm text-slate-600 flex items-center gap-2">
+                                  <Stethoscope className="h-4 w-4" />
+                                  {appointment.doctors?.name || 'Doctor no asignado'}
+                                </p>
+                                <p className="text-sm text-slate-600 flex items-center gap-2">
+                                  <Calendar className="h-4 w-4" />
+                                  {new Date(appointment.date).toLocaleDateString("es-ES")} - {appointment.time}
+                                </p>
+                              </div>
                               {appointment.notes && (
-                                <div className="bg-slate-50 p-3 rounded-lg mt-3">
+                                <div className="bg-slate-50 p-3 rounded-lg mt-3 border border-slate-200">
                                   <p className="text-sm text-slate-700">
-                                    <span className="font-medium">Notas:</span> {appointment.notes}
+                                    <span className="font-semibold">Notas:</span> {appointment.notes}
                                   </p>
                                 </div>
                               )}
@@ -445,22 +522,35 @@ function PatientDashboard() {
           )}
 
           {activeTab === "historial" && (
-            <div className="max-w-4xl mx-auto">
-              <h2 className="text-2xl font-bold mb-6 text-slate-900">Historial médico</h2>
+            <div className="max-w-5xl mx-auto">
+              <div className="flex items-center gap-3 mb-8">
+                <div className="p-2 bg-sky-100 rounded-lg">
+                  <FileText className="h-6 w-6 text-sky-600" />
+                </div>
+                <div>
+                  <h2 className="text-2xl font-bold text-slate-900">Historial médico</h2>
+                  <p className="text-slate-600">Tu información médica completa</p>
+                </div>
+              </div>
+
               <div className="space-y-6">
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Información general</CardTitle>
+                <Card className="border-0 shadow-xl shadow-slate-200/50 overflow-hidden">
+                  <div className="absolute top-0 left-0 w-full h-1 bg-linear-to-r from-sky-500 to-blue-500"></div>
+                  <CardHeader className="bg-linear-to-br from-sky-50 to-blue-50 border-b border-sky-100">
+                    <CardTitle className="flex items-center gap-2">
+                      <User className="h-5 w-5 text-sky-600" />
+                      Información general
+                    </CardTitle>
                   </CardHeader>
-                  <CardContent>
-                    <div className="grid md:grid-cols-2 gap-4">
-                      <div>
-                        <p className="text-sm text-slate-600 mb-1">Tipo de sangre</p>
-                        <p className="font-medium text-slate-900">{patient?.blood_type || 'No registrado'}</p>
+                  <CardContent className="p-6">
+                    <div className="grid md:grid-cols-2 gap-6">
+                      <div className="p-4 bg-slate-50 rounded-xl">
+                        <p className="text-sm text-slate-600 mb-1 font-medium">Tipo de sangre</p>
+                        <p className="font-bold text-slate-900 text-lg">{patient?.blood_type || 'No registrado'}</p>
                       </div>
-                      <div>
-                        <p className="text-sm text-slate-600 mb-1">Alergias</p>
-                        <p className="font-medium text-slate-900">{patient?.allergies || 'No registrado'}</p>
+                      <div className="p-4 bg-slate-50 rounded-xl">
+                        <p className="text-sm text-slate-600 mb-1 font-medium">Alergias</p>
+                        <p className="font-bold text-slate-900 text-lg">{patient?.allergies || 'No registrado'}</p>
                       </div>
                       <div>
                         <p className="text-sm text-slate-600 mb-1">Última visita</p>
@@ -474,9 +564,9 @@ function PatientDashboard() {
                             : 'Sin visitas previas'}
                         </p>
                       </div>
-                      <div>
-                        <p className="text-sm text-slate-600 mb-1">Próxima cita</p>
-                        <p className="font-medium text-slate-900">
+                      <div className="p-4 bg-linear-to-br from-sky-50 to-blue-50 rounded-xl border border-sky-200">
+                        <p className="text-sm text-sky-700 mb-1 font-medium">Próxima cita</p>
+                        <p className="font-bold text-slate-900 text-lg">
                           {upcomingAppointments.length > 0
                             ? new Date(upcomingAppointments[0].date).toLocaleDateString("es-ES", {
                               day: 'numeric',
@@ -490,29 +580,44 @@ function PatientDashboard() {
                   </CardContent>
                 </Card>
 
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Tratamientos realizados</CardTitle>
+                <Card className="border-0 shadow-xl shadow-slate-200/50 overflow-hidden">
+                  <div className="absolute top-0 left-0 w-full h-1 bg-linear-to-r from-blue-500 to-sky-500"></div>
+                  <CardHeader className="bg-linear-to-br from-blue-50 to-sky-50 border-b border-blue-100">
+                    <CardTitle className="flex items-center gap-2">
+                      <Stethoscope className="h-5 w-5 text-blue-600" />
+                      Tratamientos realizados
+                    </CardTitle>
                   </CardHeader>
-                  <CardContent>
+                  <CardContent className="p-6">
                     {pastAppointments.length === 0 ? (
-                      <p className="text-slate-600 text-center py-4">No hay tratamientos registrados</p>
+                      <div className="text-center py-8">
+                        <div className="bg-slate-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-3">
+                          <FileText className="h-8 w-8 text-slate-400" />
+                        </div>
+                        <p className="text-slate-600">No hay tratamientos registrados</p>
+                      </div>
                     ) : (
                       <div className="space-y-4">
                         {pastAppointments.slice(0, 5).map((appointment) => (
-                          <div key={appointment.id} className="flex items-start gap-4 pb-4 border-b last:border-0">
-                            <div className="bg-sky-50 p-2 rounded-lg">
+                          <div key={appointment.id} className="flex items-start gap-4 p-4 bg-slate-50 rounded-xl hover:bg-slate-100 transition-colors">
+                            <div className="bg-sky-100 p-3 rounded-lg">
                               <FileText className="h-5 w-5 text-sky-600" />
                             </div>
                             <div className="flex-1">
-                              <p className="font-medium text-slate-900">{appointment.service}</p>
-                              <p className="text-sm text-slate-600">
+                              <p className="font-bold text-slate-900">{appointment.service}</p>
+                              <p className="text-sm text-slate-600 flex items-center gap-1 mt-1">
+                                <Stethoscope className="h-4 w-4" />
                                 {appointment.doctors?.name || 'Doctor no asignado'}
                               </p>
-                              <p className="text-sm text-slate-500">
-                                {new Date(appointment.date).toLocaleDateString("es-ES")}
+                              <p className="text-sm text-slate-500 mt-1">
+                                {new Date(appointment.date).toLocaleDateString("es-ES", {
+                                  day: 'numeric',
+                                  month: 'long',
+                                  year: 'numeric'
+                                })}
                               </p>
                             </div>
+                            <CheckCircle2 className="h-5 w-5 text-green-600" />
                           </div>
                         ))}
                       </div>
@@ -534,6 +639,7 @@ function PatientDashboard() {
 
 function PatientProfile({ patient, onUpdate }: { patient: any; onUpdate: () => void }) {
   const [loading, setLoading] = useState(false)
+  const [isEditing, setIsEditing] = useState(false)
   const [formData, setFormData] = useState({
     first_name: patient.first_name,
     last_name: patient.last_name,
@@ -552,6 +658,7 @@ function PatientProfile({ patient, onUpdate }: { patient: any; onUpdate: () => v
     try {
       await patientsService.update(patient.id, formData)
       alert('Perfil actualizado exitosamente')
+      setIsEditing(false)
       onUpdate()
     } catch (error) {
       console.error('Error updating profile:', error)
@@ -562,134 +669,181 @@ function PatientProfile({ patient, onUpdate }: { patient: any; onUpdate: () => v
   }
 
   return (
-    <div className="max-w-2xl mx-auto">
-      <h2 className="text-2xl font-bold mb-6 text-slate-900">Mi perfil</h2>
-      <Card>
-        <CardContent className="p-6">
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div className="flex items-center gap-6 pb-6 border-b">
-              <div className="bg-sky-100 w-20 h-20 rounded-full flex items-center justify-center">
-                <User className="h-10 w-10 text-sky-600" />
+    <div className="max-w-4xl mx-auto">
+      <div className="flex items-center justify-between mb-8">
+        <div className="flex items-center gap-3">
+          <div className="p-2 bg-sky-100 rounded-lg">
+            <User className="h-6 w-6 text-sky-600" />
+          </div>
+          <div>
+            <h2 className="text-2xl font-bold text-slate-900">Mi perfil</h2>
+            <p className="text-slate-600">Administra tu información personal</p>
+          </div>
+        </div>
+        {!isEditing && (
+          <Button
+            onClick={() => setIsEditing(true)}
+            className="bg-linear-to-r from-sky-600 to-blue-600 hover:from-sky-700 hover:to-blue-700 shadow-lg shadow-sky-500/30"
+          >
+            <Edit className="mr-2 h-4 w-4" />
+            Editar perfil
+          </Button>
+        )}
+      </div>
+
+      <Card className="border-0 shadow-2xl shadow-slate-200/50 overflow-hidden">
+        <div className="absolute top-0 left-0 w-full h-1 bg-linear-to-r from-sky-500 via-blue-500 to-sky-500"></div>
+        <CardContent className="p-8">
+          {/* Header del perfil */}
+          <div className="flex items-center gap-6 pb-8 border-b border-slate-200 mb-8">
+            <div className="relative">
+              <div className="bg-linear-to-br from-sky-500 to-blue-600 w-24 h-24 rounded-2xl flex items-center justify-center shadow-xl shadow-sky-500/30">
+                <User className="h-12 w-12 text-white" />
               </div>
-              <div>
-                <h3 className="font-semibold text-lg text-slate-900">
-                  {patient.first_name} {patient.last_name}
-                </h3>
-                <p className="text-slate-600">
-                  Paciente desde {new Date(patient.created_at).getFullYear()}
-                </p>
+              <div className="absolute -bottom-2 -right-2 bg-green-500 w-8 h-8 rounded-full border-4 border-white flex items-center justify-center">
+                <CheckCircle2 className="h-4 w-4 text-white" />
               </div>
             </div>
+            <div>
+              <h3 className="font-bold text-2xl text-slate-900">
+                {patient.first_name} {patient.last_name}
+              </h3>
+              <p className="text-slate-600 flex items-center gap-2 mt-1">
+                <Sparkles className="h-4 w-4 text-sky-600" />
+                Paciente desde {new Date(patient.created_at).getFullYear()}
+              </p>
+            </div>
+          </div>
 
-            <div className="grid md:grid-cols-2 gap-4">
+          <div className="grid md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="first_name">Nombre</Label>
+              <Input
+                id="first_name"
+                value={formData.first_name}
+                onChange={(e) => setFormData({ ...formData, first_name: e.target.value })}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="last_name">Apellido</Label>
+              <Input
+                id="last_name"
+                value={formData.last_name}
+                onChange={(e) => setFormData({ ...formData, last_name: e.target.value })}
+              />
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="email">Correo electrónico</Label>
+            <Input
+              id="email"
+              type="email"
+              value={formData.email}
+              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="phone">Teléfono</Label>
+            <Input
+              id="phone"
+              type="tel"
+              value={formData.phone}
+              onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="birth_date">Fecha de nacimiento</Label>
+            <Input
+              id="birth_date"
+              type="date"
+              value={formData.birth_date}
+              onChange={(e) => setFormData({ ...formData, birth_date: e.target.value })}
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="address">Dirección</Label>
+            <Input
+              id="address"
+              value={formData.address}
+              onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+              placeholder="Calle Principal 123, Ciudad"
+            />
+          </div>
+
+          {/* Información Médica */}
+          <div className="pt-6 border-t border-slate-200">
+            <h3 className="font-bold text-lg mb-4 text-slate-900 flex items-center gap-2">
+              <Stethoscope className="h-5 w-5 text-red-600" />
+              Información Médica
+            </h3>
+            <div className="grid md:grid-cols-2 gap-6">
               <div className="space-y-2">
-                <Label htmlFor="first_name">Nombre</Label>
+                <Label htmlFor="blood_type">Tipo de sangre</Label>
                 <Input
-                  id="first_name"
-                  value={formData.first_name}
-                  onChange={(e) => setFormData({ ...formData, first_name: e.target.value })}
+                  id="blood_type"
+                  value={formData.blood_type}
+                  onChange={(e) => setFormData({ ...formData, blood_type: e.target.value })}
+                  placeholder="O+"
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="last_name">Apellido</Label>
+                <Label htmlFor="allergies">Alergias</Label>
                 <Input
-                  id="last_name"
-                  value={formData.last_name}
-                  onChange={(e) => setFormData({ ...formData, last_name: e.target.value })}
+                  id="allergies"
+                  value={formData.allergies}
+                  onChange={(e) => setFormData({ ...formData, allergies: e.target.value })}
+                  placeholder="Penicilina"
                 />
               </div>
             </div>
+          </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="email">Correo electrónico</Label>
-              <Input
-                id="email"
-                type="email"
-                value={formData.email}
-                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-              />
-            </div>
+          <div className="flex gap-4">
+            <Button
+              type="submit"
+              className="bg-sky-600 hover:bg-sky-700"
+              disabled={loading}
+            >
+              {loading ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Guardando...
+                </>
+              ) : (
+                'Guardar cambios'
+              )}
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={onUpdate}
+            >
+              Cancelar
+            </Button>
+          </div>
+        </form>
+      </CardContent>
+    </Card>
 
-            <div className="space-y-2">
-              <Label htmlFor="phone">Teléfono</Label>
-              <Input
-                id="phone"
-                type="tel"
-                value={formData.phone}
-                onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="birth_date">Fecha de nacimiento</Label>
-              <Input
-                id="birth_date"
-                type="date"
-                value={formData.birth_date}
-                onChange={(e) => setFormData({ ...formData, birth_date: e.target.value })}
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="address">Dirección</Label>
-              <Input
-                id="address"
-                value={formData.address}
-                onChange={(e) => setFormData({ ...formData, address: e.target.value })}
-                placeholder="Calle Principal 123, Ciudad"
-              />
-            </div>
-
-            <div className="pt-4 border-t">
-              <h3 className="font-semibold text-lg mb-4 text-slate-900">Información médica</h3>
-              <div className="grid md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="blood_type">Tipo de sangre</Label>
-                  <Input
-                    id="blood_type"
-                    value={formData.blood_type}
-                    onChange={(e) => setFormData({ ...formData, blood_type: e.target.value })}
-                    placeholder="O+"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="allergies">Alergias</Label>
-                  <Input
-                    id="allergies"
-                    value={formData.allergies}
-                    onChange={(e) => setFormData({ ...formData, allergies: e.target.value })}
-                    placeholder="Penicilina"
-                  />
-                </div>
-              </div>
-            </div>
-
-            <div className="flex gap-4">
-              <Button
-                type="submit"
-                className="bg-sky-600 hover:bg-sky-700"
-                disabled={loading}
-              >
-                {loading ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Guardando...
-                  </>
-                ) : (
-                  'Guardar cambios'
-                )}
-              </Button>
-              <Button
-                type="button"
-                variant="outline"
-                onClick={onUpdate}
-              >
-                Cancelar
-              </Button>
-            </div>
-          </form>
-        </CardContent>
-      </Card>
-    </div>
+      {
+    !isEditing && (
+      <div className="mt-6 p-5 bg-linear-to-r from-sky-50 to-blue-50 rounded-xl border border-sky-200">
+        <div className="flex items-start gap-3">
+          <Shield className="h-6 w-6 text-sky-600 shrink-0 mt-0.5" />
+          <div>
+            <p className="font-semibold text-sky-900 mb-1">Información protegida</p>
+            <p className="text-sm text-sky-800 leading-relaxed">
+              Todos tus datos están encriptados y protegidos bajo las normativas de privacidad médica.
+            </p>
+          </div>
+        </div>
+      </div>
+    )
+  }
+    </div >
   )
 }

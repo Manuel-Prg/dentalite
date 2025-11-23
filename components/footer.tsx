@@ -68,11 +68,6 @@ export function Footer() {
                   Área de pacientes
                 </Link>
               </li>
-              <li>
-                <Link href="/admin" className="hover:text-sky-400 transition-colors">
-                  Panel administrativo
-                </Link>
-              </li>
             </ul>
           </div>
 

@@ -16,7 +16,6 @@ import { appointmentsService, doctorsService, patientsService } from "@/lib/supa
 import { useAuth } from "@/contexts/AuthContext"
 import { useRouter } from "next/navigation"
 import { sendWhatsAppConfirmation } from "@/lib/whatsapp"
-import { sendAppointmentConfirmationEmail } from "@/lib/email"
 import { AuthRequiredDialog } from "@/components/auth-required-dialog"
 const services = [
   "Limpieza dental",
@@ -138,13 +137,6 @@ export default function AgendarPage() {
 
       sendWhatsAppConfirmation(formData.phone, appointmentInfo)
 
-      try {
-        await sendAppointmentConfirmationEmail(formData.email, appointmentInfo)
-        console.log('Email sent successfully')
-      } catch (emailError) {
-        console.error('Error sending email:', emailError)
-      }
-
       setStep(4)
 
     } catch (error: any) {
@@ -186,7 +178,7 @@ export default function AgendarPage() {
               Agenda tu cita dental
             </h1>
             <p className="text-xl text-slate-600 text-pretty leading-relaxed max-w-2xl mx-auto animate-fade-in-up stagger-1">
-              Selecciona el servicio, fecha y hora que mejor se adapte a ti. Confirmación inmediata por WhatsApp y email.
+              Selecciona el servicio, fecha y hora que mejor se adapte a ti. Confirmación inmediata por WhatsApp.
             </p>
           </div>
         </div>
@@ -317,7 +309,7 @@ export default function AgendarPage() {
                       <div className="space-y-2">
                         <div className="flex items-center gap-2">
                           <Label htmlFor="email" className="font-semibold text-slate-700">Correo electrónico *</Label>
-                          <HelpTooltip content="Enviaremos la confirmación de tu cita a este correo" />
+                          <HelpTooltip content="Tu correo electrónico de contacto" />
                         </div>
                         <div className="relative">
                           <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
@@ -485,8 +477,8 @@ export default function AgendarPage() {
                             type="button"
                             variant={selectedTime === time ? "default" : "outline"}
                             className={`h-14 transition-all ${selectedTime === time
-                                ? "bg-linear-to-br from-sky-500 to-blue-600 hover:from-sky-600 hover:to-blue-700 text-white shadow-lg shadow-sky-500/30 scale-105"
-                                : "hover:border-sky-300 hover:bg-sky-50"
+                              ? "bg-linear-to-br from-sky-500 to-blue-600 hover:from-sky-600 hover:to-blue-700 text-white shadow-lg shadow-sky-500/30 scale-105"
+                              : "hover:border-sky-300 hover:bg-sky-50"
                               }`}
                             onClick={() => setSelectedTime(time)}
                           >
@@ -623,7 +615,7 @@ export default function AgendarPage() {
                         <div>
                           <p className="font-semibold text-sky-900 mb-1">Información importante</p>
                           <p className="text-sm text-sky-800 leading-relaxed">
-                            Recibirás una confirmación por WhatsApp y correo electrónico. Por favor, llega 10 minutos antes
+                            Recibirás una confirmación por WhatsApp. Por favor, llega 10 minutos antes
                             de tu cita.
                           </p>
                         </div>
@@ -677,8 +669,7 @@ export default function AgendarPage() {
                   </p>
                   <div className="bg-sky-50 border border-sky-200 p-4 rounded-lg mb-8 max-w-md mx-auto">
                     <p className="text-sm text-sky-900 leading-relaxed">
-                      📱 Se ha abierto WhatsApp con tu confirmación. Si no se abrió automáticamente,
-                      también recibirás la confirmación por correo electrónico.
+                      📱 Se ha abierto WhatsApp con tu confirmación.
                     </p>
                   </div>
 
@@ -770,7 +761,7 @@ export default function AgendarPage() {
                     </div>
                     <h3 className="font-bold mb-2 text-slate-900 text-lg">Confirmación inmediata</h3>
                     <p className="text-sm text-slate-600 leading-relaxed">
-                      Recibirás confirmación instantánea por WhatsApp y correo electrónico
+                      Recibirás confirmación instantánea por WhatsApp
                     </p>
                   </CardContent>
                 </Card>

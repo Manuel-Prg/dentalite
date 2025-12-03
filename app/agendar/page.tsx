@@ -9,7 +9,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Calendar } from "@/components/ui/calendar"
 import { useState, useEffect } from "react"
-import { CalendarIcon, Check, Clock, AlertCircle, Loader2, Sparkles, User, Mail, Phone, FileText, Stethoscope, ArrowRight, ArrowLeft, CheckCircle2 } from "lucide-react"
+import { CalendarIcon, Check, Clock, AlertCircle, Loader2, Sparkles, User, Mail, Phone, FileText, Stethoscope, ArrowRight, ArrowLeft, CheckCircle2, Download } from "lucide-react"
 import { Breadcrumbs } from "@/components/breadcrumbs"
 import { HelpTooltip } from "@/components/help-tooltip"
 import { appointmentsService, doctorsService, patientsService } from "@/lib/supabase"
@@ -17,6 +17,7 @@ import { useAuth } from "@/contexts/AuthContext"
 import { useRouter } from "next/navigation"
 import { sendWhatsAppConfirmation } from "@/lib/whatsapp"
 import { AuthRequiredDialog } from "@/components/auth-required-dialog"
+import { generateAppointmentPDF } from "@/lib/pdf-generator"
 const services = [
   "Limpieza dental",
   "Ortodoncia",
@@ -44,6 +45,7 @@ export default function AgendarPage() {
   const [doctors, setDoctors] = useState<any[]>([])
   const [patientId, setPatientId] = useState<string | null>(null)
   const [showAuthDialog, setShowAuthDialog] = useState(false)
+  const [bookedSlots, setBookedSlots] = useState<string[]>([])
   const { user } = useAuth()
   const router = useRouter()
 
@@ -63,6 +65,13 @@ export default function AgendarPage() {
       loadUserPatientData()
     }
   }, [user])
+
+  // Cargar horarios ocupados cuando cambia la fecha o el doctor
+  useEffect(() => {
+    if (date) {
+      loadBookedSlots()
+    }
+  }, [date, formData.doctorId])
 
   const loadDoctors = async () => {
     try {
@@ -93,11 +102,57 @@ export default function AgendarPage() {
     }
   }
 
+  const loadBookedSlots = async () => {
+    if (!date) return
+
+    try {
+      const dateStr = date.toISOString().split('T')[0]
+      const slots = await appointmentsService.getBookedSlots(
+        dateStr,
+        formData.doctorId || null
+      )
+      setBookedSlots(slots)
+    } catch (error) {
+      console.error('Error loading booked slots:', error)
+    }
+  }
+
+  const handleDownloadPDF = () => {
+    const selectedDoctor = doctors.find(d => d.id === formData.doctorId)
+
+    generateAppointmentPDF({
+      patientName: `${formData.firstName} ${formData.lastName}`,
+      email: formData.email,
+      phone: formData.phone,
+      service: formData.service,
+      date: date!.toISOString().split('T')[0],
+      time: selectedTime,
+      doctorName: selectedDoctor?.name,
+      notes: formData.notes
+    })
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
 
     try {
+      // Verificar disponibilidad del horario antes de crear la cita
+      const dateStr = date!.toISOString().split('T')[0]
+      const isAvailable = await appointmentsService.isSlotAvailable(
+        dateStr,
+        selectedTime,
+        formData.doctorId || null
+      )
+
+      if (!isAvailable) {
+        alert('Lo sentimos, este horario ya no está disponible. Por favor selecciona otro horario.')
+        setLoading(false)
+        setStep(2)
+        await loadBookedSlots() // Recargar horarios ocupados
+        return
+      }
+
       let currentPatientId = patientId
 
       if (!currentPatientId) {
@@ -471,21 +526,28 @@ export default function AgendarPage() {
                     <div>
                       <Label className="mb-4 block font-semibold text-slate-700 text-lg">Hora disponible</Label>
                       <div className="grid grid-cols-3 gap-2 max-h-96 overflow-y-auto pr-2 custom-scrollbar">
-                        {timeSlots.map((time) => (
-                          <Button
-                            key={time}
-                            type="button"
-                            variant={selectedTime === time ? "default" : "outline"}
-                            className={`h-14 transition-all ${selectedTime === time
-                              ? "bg-linear-to-br from-sky-500 to-blue-600 hover:from-sky-600 hover:to-blue-700 text-white shadow-lg shadow-sky-500/30 scale-105"
-                              : "hover:border-sky-300 hover:bg-sky-50"
-                              }`}
-                            onClick={() => setSelectedTime(time)}
-                          >
-                            <Clock className="h-4 w-4 mr-1" />
-                            {time}
-                          </Button>
-                        ))}
+                        {timeSlots.map((time) => {
+                          const isBooked = bookedSlots.includes(time)
+                          return (
+                            <Button
+                              key={time}
+                              type="button"
+                              variant={selectedTime === time ? "default" : "outline"}
+                              disabled={isBooked}
+                              className={`h-14 transition-all ${isBooked
+                                  ? "bg-slate-100 text-slate-400 cursor-not-allowed opacity-50"
+                                  : selectedTime === time
+                                    ? "bg-linear-to-br from-sky-500 to-blue-600 hover:from-sky-600 hover:to-blue-700 text-white shadow-lg shadow-sky-500/30 scale-105"
+                                    : "hover:border-sky-300 hover:bg-sky-50"
+                                }`}
+                              onClick={() => !isBooked && setSelectedTime(time)}
+                            >
+                              <Clock className="h-4 w-4 mr-1" />
+                              {time}
+                              {isBooked && <span className="ml-1 text-xs">✕</span>}
+                            </Button>
+                          )
+                        })}
                       </div>
                     </div>
                   </div>
@@ -709,6 +771,14 @@ export default function AgendarPage() {
                     </div>
 
                     <div className="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in stagger-4">
+                      <Button
+                        variant="outline"
+                        onClick={handleDownloadPDF}
+                        className="h-12 border-2 px-6 border-sky-500 text-sky-600 hover:bg-sky-50"
+                      >
+                        <Download className="mr-2 h-5 w-5" />
+                        Descargar PDF
+                      </Button>
                       <Button
                         variant="outline"
                         onClick={() => {

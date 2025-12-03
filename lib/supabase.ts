@@ -1,4 +1,4 @@
-// lib/supabase.ts
+﻿// lib/supabase.ts
 import { createClient } from '@supabase/supabase-js'
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
@@ -128,6 +128,49 @@ export const appointmentsService = {
       .eq('id', id)
     
     if (error) throw error
+  },
+
+  // Verificar si un horario está disponible para un doctor en una fecha específica
+  async isSlotAvailable(date: string, time: string, doctorId?: string | null) {
+    let query = supabase
+      .from('appointments')
+      .select('id')
+      .eq('date', date)
+      .eq('time', time)
+      .neq('status', 'cancelada') // No contar citas canceladas
+
+    // Si hay un doctor específico, verificar solo para ese doctor
+    if (doctorId) {
+      query = query.eq('doctor_id', doctorId)
+    }
+
+    const { data, error } = await query
+
+    if (error) throw error
+    
+    // Si no hay datos, el horario está disponible
+    return !data || data.length === 0
+  },
+
+  // Obtener todos los horarios ocupados para una fecha específica
+  async getBookedSlots(date: string, doctorId?: string | null) {
+    let query = supabase
+      .from('appointments')
+      .select('time, doctor_id')
+      .eq('date', date)
+      .neq('status', 'cancelada') // No contar citas canceladas
+
+    // Si hay un doctor específico, filtrar solo por ese doctor
+    if (doctorId) {
+      query = query.eq('doctor_id', doctorId)
+    }
+
+    const { data, error } = await query
+
+    if (error) throw error
+    
+    // Retornar array de horarios ocupados
+    return data?.map(appointment => appointment.time) || []
   }
 }
 

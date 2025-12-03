@@ -131,6 +131,36 @@ export default function AgendarPage() {
     })
   }
 
+  const handleStep2Next = async () => {
+    if (!date || !selectedTime) return
+    setLoading(true)
+
+    try {
+      const dateStr = date.toISOString().split('T')[0]
+      const isAvailable = await appointmentsService.isSlotAvailable(
+        dateStr,
+        selectedTime,
+        formData.doctorId || null
+      )
+
+      if (!isAvailable) {
+        toast.error('Horario no disponible', {
+          description: 'Lo sentimos, este horario acaba de ser ocupado. Por favor selecciona otro.',
+          duration: 5000,
+        })
+        await loadBookedSlots()
+        setSelectedTime("")
+      } else {
+        setStep(3)
+      }
+    } catch (error) {
+      console.error('Error checking slot availability:', error)
+      toast.error('Error al verificar disponibilidad')
+    } finally {
+      setLoading(false)
+    }
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
@@ -568,12 +598,21 @@ export default function AgendarPage() {
                     </Button>
                     <Button
                       type="button"
-                      onClick={() => setStep(3)}
-                      disabled={!date || !selectedTime}
+                      onClick={handleStep2Next}
+                      disabled={!date || !selectedTime || loading}
                       className="flex-1 h-12 bg-linear-to-r from-sky-600 to-blue-600 hover:from-sky-700 hover:to-blue-700 text-white font-semibold shadow-lg shadow-sky-500/30 transition-all hover:shadow-xl hover:shadow-sky-500/40 disabled:opacity-50"
                     >
-                      Continuar
-                      <ArrowRight className="ml-2 h-5 w-5" />
+                      {loading ? (
+                        <>
+                          <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                          Verificando...
+                        </>
+                      ) : (
+                        <>
+                          Continuar
+                          <ArrowRight className="ml-2 h-5 w-5" />
+                        </>
+                      )}
                     </Button>
                   </div>
                 </CardContent>

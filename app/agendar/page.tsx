@@ -18,6 +18,7 @@ import { useRouter } from "next/navigation"
 import { sendWhatsAppConfirmation } from "@/lib/whatsapp"
 import { AuthRequiredDialog } from "@/components/auth-required-dialog"
 import { generateAppointmentPDF } from "@/lib/pdf-generator"
+import { toast } from "sonner"
 const services = [
   "Limpieza dental",
   "Ortodoncia",
@@ -144,7 +145,10 @@ export default function AgendarPage() {
       )
 
       if (!isAvailable) {
-        alert('Lo sentimos, este horario ya no está disponible. Por favor selecciona otro horario.')
+        toast.error('Horario no disponible', {
+          description: 'Lo sentimos, este horario acaba de ser ocupado. Por favor selecciona otro.',
+          duration: 5000,
+        })
         setLoading(false)
         setStep(2)
         await loadBookedSlots() // Recargar horarios ocupados
@@ -201,7 +205,9 @@ export default function AgendarPage() {
         error.code === '42501') {
         setShowAuthDialog(true)
       } else {
-        alert('Error al crear la cita: ' + error.message)
+        toast.error('Error al crear la cita', {
+          description: error.message,
+        })
       }
     } finally {
       setLoading(false)

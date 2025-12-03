@@ -5,6 +5,7 @@ import "./globals.css"
 import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
 import { AuthProvider } from "@/contexts/AuthContext"
+import { Toaster } from "sonner"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -12,7 +13,7 @@ export const metadata: Metadata = {
   title: "Dentalite - Tu clínica dental de confianza",
   description: "Cuidamos tu sonrisa con profesionalismo y tecnología de vanguardia. Agenda tu cita hoy.",
   generator: 'abner dev',
-  icons:{
+  icons: {
     icon: '/favicon.ico',
     apple: '/apple-touch-icon.png',
     shortcut: '/apple-touch-icon.png'
@@ -31,6 +32,7 @@ export default function RootLayout({
           <Header />
           <main>{children}</main>
           <Footer />
+          <Toaster />
         </AuthProvider>
       </body>
     </html>

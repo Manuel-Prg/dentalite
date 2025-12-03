@@ -66,12 +66,12 @@ export default function AgendarPage() {
     }
   }, [user])
 
-  // Cargar horarios ocupados cuando cambia la fecha o el doctor
+  // Cargar horarios ocupados cuando cambia la fecha
   useEffect(() => {
     if (date) {
       loadBookedSlots()
     }
-  }, [date, formData.doctorId])
+  }, [date])
 
   const loadDoctors = async () => {
     try {
@@ -107,10 +107,8 @@ export default function AgendarPage() {
 
     try {
       const dateStr = date.toISOString().split('T')[0]
-      const slots = await appointmentsService.getBookedSlots(
-        dateStr,
-        formData.doctorId || null
-      )
+      // Cargar TODOS los horarios ocupados sin importar el doctor
+      const slots = await appointmentsService.getBookedSlots(dateStr, null)
       setBookedSlots(slots)
     } catch (error) {
       console.error('Error loading booked slots:', error)
@@ -535,10 +533,10 @@ export default function AgendarPage() {
                               variant={selectedTime === time ? "default" : "outline"}
                               disabled={isBooked}
                               className={`h-14 transition-all ${isBooked
-                                  ? "bg-slate-100 text-slate-400 cursor-not-allowed opacity-50"
-                                  : selectedTime === time
-                                    ? "bg-linear-to-br from-sky-500 to-blue-600 hover:from-sky-600 hover:to-blue-700 text-white shadow-lg shadow-sky-500/30 scale-105"
-                                    : "hover:border-sky-300 hover:bg-sky-50"
+                                ? "bg-slate-100 text-slate-400 cursor-not-allowed opacity-50"
+                                : selectedTime === time
+                                  ? "bg-linear-to-br from-sky-500 to-blue-600 hover:from-sky-600 hover:to-blue-700 text-white shadow-lg shadow-sky-500/30 scale-105"
+                                  : "hover:border-sky-300 hover:bg-sky-50"
                                 }`}
                               onClick={() => !isBooked && setSelectedTime(time)}
                             >

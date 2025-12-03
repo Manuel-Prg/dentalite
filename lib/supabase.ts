@@ -61,7 +61,7 @@ export const appointmentsService = {
       .insert([appointment])
       .select()
       .single()
-    
+
     if (error) throw error
     return data
   },
@@ -84,7 +84,7 @@ export const appointmentsService = {
         )
       `)
       .order('date', { ascending: true })
-    
+
     if (error) throw error
     return data
   },
@@ -102,7 +102,7 @@ export const appointmentsService = {
       `)
       .eq('patient_id', patientId)
       .order('date', { ascending: false })
-    
+
     if (error) throw error
     return data
   },
@@ -115,7 +115,7 @@ export const appointmentsService = {
       .eq('id', id)
       .select()
       .single()
-    
+
     if (error) throw error
     return data
   },
@@ -126,49 +126,35 @@ export const appointmentsService = {
       .from('appointments')
       .delete()
       .eq('id', id)
-    
+
     if (error) throw error
   },
 
-  // Verificar si un horario está disponible para un doctor en una fecha específica
+  // Verificar si un horario está disponible (sin importar el doctor)
   async isSlotAvailable(date: string, time: string, doctorId?: string | null) {
-    let query = supabase
+    const { data, error } = await supabase
       .from('appointments')
       .select('id')
       .eq('date', date)
       .eq('time', time)
       .neq('status', 'cancelada') // No contar citas canceladas
 
-    // Si hay un doctor específico, verificar solo para ese doctor
-    if (doctorId) {
-      query = query.eq('doctor_id', doctorId)
-    }
-
-    const { data, error } = await query
-
     if (error) throw error
-    
+
     // Si no hay datos, el horario está disponible
     return !data || data.length === 0
   },
 
-  // Obtener todos los horarios ocupados para una fecha específica
+  // Obtener todos los horarios ocupados para una fecha (sin importar el doctor)
   async getBookedSlots(date: string, doctorId?: string | null) {
-    let query = supabase
+    const { data, error } = await supabase
       .from('appointments')
       .select('time, doctor_id')
       .eq('date', date)
       .neq('status', 'cancelada') // No contar citas canceladas
 
-    // Si hay un doctor específico, filtrar solo por ese doctor
-    if (doctorId) {
-      query = query.eq('doctor_id', doctorId)
-    }
-
-    const { data, error } = await query
-
     if (error) throw error
-    
+
     // Retornar array de horarios ocupados
     return data?.map(appointment => appointment.time) || []
   }
@@ -182,7 +168,7 @@ export const patientsService = {
       .insert([patient])
       .select()
       .single()
-    
+
     if (error) throw error
     return data
   },
@@ -192,7 +178,7 @@ export const patientsService = {
       .from('patients')
       .select('*')
       .order('created_at', { ascending: false })
-    
+
     if (error) throw error
     return data
   },
@@ -203,7 +189,7 @@ export const patientsService = {
       .select('*')
       .eq('id', id)
       .single()
-    
+
     if (error) throw error
     return data
   },
@@ -214,7 +200,7 @@ export const patientsService = {
       .select('*')
       .eq('user_id', userId)
       .single()
-    
+
     if (error) throw error
     return data
   },
@@ -226,7 +212,7 @@ export const patientsService = {
       .eq('id', id)
       .select()
       .single()
-    
+
     if (error) throw error
     return data
   }
@@ -239,7 +225,7 @@ export const doctorsService = {
       .from('doctors')
       .select('*')
       .order('name', { ascending: true })
-    
+
     if (error) throw error
     return data
   },
@@ -250,7 +236,7 @@ export const doctorsService = {
       .select('*')
       .eq('id', id)
       .single()
-    
+
     if (error) throw error
     return data
   }
